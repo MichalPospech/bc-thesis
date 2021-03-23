@@ -1,0 +1,8 @@
+{
+    "latex-workshop.latex.autoBuild.run": "onSave",
+    "latex-workshop.latex.recipe.default": "lastUsed",
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.latex.external.build.command": "make",
+    "latex-workshop.latex.clean.method": "cleanCommand",
+    "latex-workshop.latex.clean.command": "make clean"
+}
