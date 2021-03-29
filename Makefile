@@ -22,4 +22,6 @@ $(ABSTRACT)-%.pdf: $(ABSTRACT)-%.tex $(ABSTRACT)-%.xmpdata metadata.tex
 
 clean:
 	$(RMF) *.log *.dvi *.aux *.toc *.lof *.lot *.out *.bbl *.blg *.xmpi
+
+clean-all: clean
 	$(RMF) $(PDFS)
