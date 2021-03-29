@@ -13,7 +13,6 @@
 *.nlo
 *.nls
 *.out
-/*.pdf
 pdfa.xmpi
 *.snm
 .*.swp
