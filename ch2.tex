@@ -13,16 +13,38 @@
 \end{itemize}
 \section{Evolutionary algorithms}
 \label{sec:ea}
-Evolutionary algorithm (EA) is a subclass of evolutionary computation and belongs to set of general stochastic search algorithm. It is a metaheuristc optimization algorithm that exploits the concept of evolution. Metaheuristics are the higher-level procedures intended to find, produce, or select a lower- level procedures or heuristics which may performs partial search. It is applicable to various optimization problems with limited computation capability and having insufficient or imperfect information. In such situations, it provides adequately good solution.  
-
-An EA is inspired by the mechanism of biological evolution, such as reproduction, mutation, recombination, and selection. A set of candidate solution called population (i.e. elements of function domain) is created randomly to maximize the quality function. Then quality function in the form of abstract fitness function is applied to problem domain. For next generation some better candidates are selected on the basis of fitness function. This is achieved by applying the technique of recombination and/or mutation to them. Recombination is represented by an n-nary operator. This operator can be applied to two or more selected candidates known as parents and it generates one or more new candidates (children) as a result. Whereas mutation is applied to only one candidate and it results in one new child. After executing this recombination or mutation, it generates a set of new candidates on the basis of their fitness function. This is an iterative process. It can be continued until sufficiently good quality candidate is found or for set number of generations. (TODO opsano a mirne editovano, asi ne uplne kosher) \cite{Vikhar2016}
+\begin{itemize}
+    \item abstract definition (optimization, metaheuristic)
+    \item algorithm description
+    \item fitness function
+    \item mutation
+    \item crossover
+\end{itemize}
+  \cite{Vikhar2016}
 \section{Evolutionary strategies}
 \label{sec:es}
-TODO \cite{Rudolph2012}
+\begin{itemize}
+    \item abstract definition
+    \item + vs. ,
+    \item parametrization
+    \item guidelines for operators (reachability, unbiasedness, control)
+    \item covariances
+\end{itemize}
+     \cite{Rudolph2012}
 \subsection{CMA-ES}
 \label{subsec:cma-es}
 TODO \cite{Hansen06}
 \section{Evolutionary strategies as replacement for reinfocement learning}
 \label{sec:es-reinf}
-description what is each paper about, what are the findings and what is the state of the art
-
+\begin{itemize}
+    \item Evolution Strategies as a Scalable Alternative to Reinforcement Learning \cite{salimans2017} \begin{itemize}
+        \item algorithm description
+        \item comparison with RL
+        \item paralellization
+        \item smoothing in action vs. param space
+    \end{itemize}
+    \item Improving Exploration in Evolution Strategies for Deep Reinforcement Learning via a Population of Novelty-Seeking Agents \cite{conti2018} \begin{itemize}
+        \item novelty search
+        \item ratio of fitness and novelty and its effects
+    \end{itemize}
+\end{itemize}
