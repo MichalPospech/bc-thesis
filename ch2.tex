@@ -13,14 +13,7 @@
 \end{itemize}
 \section{Evolutionary algorithms}
 \label{sec:ea}
-\begin{itemize}
-    \item abstract definition (optimization, metaheuristic)
-    \item algorithm description
-    \item fitness function
-    \item mutation
-    \item crossover
-\end{itemize}
-  \cite{Vikhar2016}
+Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (population) and each solution (individual) is encoded (via a domain-specific encoding) and evaluated giving us the value of its fitness. Then a new population is created using a crossover (combination) of 2 or more individuals which are selected at random with their fitness playing part in the chance to be selected for crossover. Each of the newly created individuals has a chance to be mutated via the mutation operator. Finally a new population is created and enters the next iteration of the EA. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. \cite{Vikhar2016}
 \section{Evolutionary strategies}
 \label{sec:es}
 \begin{itemize}
