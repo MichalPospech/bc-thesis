@@ -13,7 +13,9 @@
 \end{itemize}
 \section{Evolutionary algorithms}
 \label{sec:ea}
-Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is everything that is needed for creation of  Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter. \cite{Rudolph2012} \cite{Vikhar2016} \todo{chybí algoritmus}
+Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is everything that is needed for creation of  Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. 
+
+There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter. \cite{Rudolph2012} \cite{Vikhar2016}
 
 \begin{algorithm}
     \begin{algorithmic}[1]
@@ -38,7 +40,7 @@ Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired 
 \label{sec:es}
 Evolutionary strategies (ES) are a type of optimisation metaheuristic which further specialises EA and restricts their level of freedom. The selection for crossover is unbiased, mutation is parametrised and thus controllable, individuals which should be put to next generation are chosen ordinally based on fitness and individuals contain not only the problem solution but also control parameters.
 
-More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each generation, which produces $\lambda$ offsprings, each created by crossover of $\rho$ individuals and each individual is able to survive for up to $\kappa$ generations. This notation further generalizes the old $(\mu,\lambda)$ and $(\mu+\lambda)$ notations, where the "," notation means $\kappa=1$ and "+" notation $\kappa=\infty$. 
+More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each generation, which produces $\lambda$ offsprings, each created by crossover of $\rho$ individuals and each individual is able to survive for up to $\kappa$ generations as described in algorithm \ref{alg:es}. This notation further generalizes the old $(\mu,\lambda)$ and $(\mu+\lambda)$ notations, where the "," notation means $\kappa=1$ and "+" notation $\kappa=\infty$. 
 \begin{algorithm}
 \begin{algorithmic}[1]
 \caption{$(\mu / \rho,\kappa,\lambda)$-ES}\label{alg:es}
@@ -60,11 +62,21 @@ More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each gen
 \end{algorithm}
 \cite{Schwefel1995}\todo{víc rozepsat, ale jak moc? chybí algoritmus}
 \begin{itemize}
-    \item parametrization
-    \item guidelines for operators (reachability, unbiasedness, control)
     \item covariances
 \end{itemize}
-     \cite{Rudolph2012}
+To design an ES one must first select an appropriate representation for an individual and the most natural one is prefered in most cases, if all parameters are of one type (e.g. a real number) a simple vector will suffice, if the types are mixed, a tuple of vectors is required. This however causes an increased complexity of the variation operator.
+
+As for design of the variation operator there are some guidelines that should be followed when designing it.
+\begin{description}
+    \item[Reachability] every solution should be reachable from any other solution in a finite number of applications of the variation operator with probability $p > 0$
+    \item[Unbiasedness] the operator should not favour any particular subset of solution unless provided with information about problem at hand
+    \item[Control] the operator should be parametrised in such way that the size of the distribution can be controlled (practice had shown that decreasing it as the optimal solution is being approached is necessary) 
+\end{description}
+
+
+
+\cite{Rudolph2012}
+
 \subsection{CMA-ES}
 \label{subsec:cma-es}
 TODO \cite{Hansen06}
