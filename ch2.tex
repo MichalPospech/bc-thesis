@@ -13,7 +13,27 @@
 \end{itemize}
 \section{Evolutionary algorithms}
 \label{sec:ea}
-Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected at random with their fitness playing part in the chance to be selected for crossover. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. \cite{Rudolph2012} \cite{Vikhar2016} \todo{chybí algoritmus}
+Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is everything that is needed for creation of  Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter. \cite{Rudolph2012} \cite{Vikhar2016} \todo{chybí algoritmus}
+
+\begin{algorithm}
+    \begin{algorithmic}[1]
+    \caption{Evolutionary algorithm}\label{alg:ea}
+        \State initialize population $P^0$ with $n$ individuals
+        \State set $t=0$
+        \Repeat
+            \State $Q^t = \{\}$
+            \For{$i \in \{1\dots m\}$}
+                \State $p_1,\dots,p_\rho = ParentalSelection(P^t)$
+                \State $q = Crossover(p_1,\dots,p_\rho)$ 
+                \State $q = Mutation(q)$ with chance $p$
+                \State $Q^t = q \cup Q^t$
+            \EndFor
+            \State $P^{t+1} =EnvironmentalSelection(Q^t\cup  P^t)$
+            \State increment $t$
+        \Until{stop criterion fullfilled}
+    \end{algorithmic}
+    \end{algorithm}
+
 \section{Evolutionary strategies}
 \label{sec:es}
 Evolutionary strategies (ES) are a type of optimisation metaheuristic which further specialises EA and restricts their level of freedom. The selection for crossover is unbiased, mutation is parametrised and thus controllable, individuals which should be put to next generation are chosen ordinally based on fitness and individuals contain not only the problem solution but also control parameters.
@@ -32,7 +52,7 @@ More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each gen
             \State $q = variation(p_1,\dots,p_\rho)$ with age $0$
             \State $Q^t = q \cup Q^t$
         \EndFor
-        \State $P^{t+1} =$ select $\mu$ best individuals from $Q^t\cup \{p \in P^t: age(p)<\kappa\}$
+        \State $P^{t+1} =$ select $\mu$ best (wrt. fitness) individuals from $Q^t\cup \{p \in P^t: age(p)<\kappa\}$
         \State increment age by 1 for each $p \in P^{t+1}$
         \State increment $t$
     \Until{stop criterion fullfilled}
