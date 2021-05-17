@@ -60,10 +60,7 @@ More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each gen
     \Until{stop criterion fullfilled}
 \end{algorithmic}
 \end{algorithm}
-\cite{Schwefel1995}\todo{víc rozepsat, ale jak moc? chybí algoritmus}
-\begin{itemize}
-    \item covariances
-\end{itemize}
+
 To design an ES one must first select an appropriate representation for an individual and the most natural one is prefered in most cases, if all parameters are of one type (e.g. a real number) a simple vector will suffice, if the types are mixed, a tuple of vectors is required. This however causes an increased complexity of the variation operator.
 
 As for design of the variation operator there are some guidelines that should be followed when designing it.
@@ -72,9 +69,8 @@ As for design of the variation operator there are some guidelines that should be
     \item[Unbiasedness] the operator should not favour any particular subset of solution unless provided with information about problem at hand
     \item[Control] the operator should be parametrised in such way that the size of the distribution can be controlled (practice had shown that decreasing it as the optimal solution is being approached is necessary) 
 \end{description}
-
-
-
+\todo{kovariance}
+\cite{Schwefel1995}
 \cite{Rudolph2012}
 
 \subsection{CMA-ES}
@@ -82,6 +78,15 @@ As for design of the variation operator there are some guidelines that should be
 TODO \cite{Hansen06}
 \section{Evolutionary strategies as replacement for reinfocement learning}
 \label{sec:es-reinf}
+\todo{uvod}
+\subsection{OpenAI Evolutionary Strategy}
+
+Compared to reinfocement learning using evolutionary strategies have the advantage of not needing a gradient of the policy performance. Also as the state transition function is not known  the gradient can't be computed using backpropagation-like algorithm. Thus some noise needs to be added to make the problem smooth and the gradient to be estimable. Here is where reinfocement learning and evolutionary strategies differ, reinfocement learning adds noise in the action space (actions are chosen from a distribution) while evolutionary strategies add noise in the parameter space (parameters perturbed while actions are deterministic).
+
+\todo{dimensionality, what and when better}
+
+
+
 \begin{itemize}
     \item Evolution Strategies as a Scalable Alternative to Reinforcement Learning \cite{salimans2017} \begin{itemize}
         \item algorithm description
