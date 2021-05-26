@@ -85,8 +85,11 @@ Compared to reinfocement learning using evolutionary strategies have the advanta
 
 \todo{dimensionality, what and when better}
 
+Not requiring backpropagation has several advantages over other RL methods. First the amount of computation necessary for one episode of ES is much lower (about one third, potentially even less for memory usage). Not calculating gradient using analytic methods also protects these methods from suffering from \emph{exploding gradient} which is a common issue with recurrent neural networks. And last, the network can contain elements that are not differentiable such as hard attention. 
 
 
+
+Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the envirionment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimization to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy.
 \begin{itemize}
     \item Evolution Strategies as a Scalable Alternative to Reinforcement Learning \cite{salimans2017} \begin{itemize}
         \item algorithm description
