@@ -79,7 +79,9 @@ As for design of the variation operator there are some guidelines that should be
 TODO \cite{Hansen06}
 \section{Evolutionary strategies as replacement for reinfocement learning}
 \label{sec:es-reinf}
-\todo{uvod}
+
+Black-box optimisation is an alternative approach to solving RL tasks also known as Direct policy search or neurevolution when applied to neural networks. It has several attractive properties such as indifferenco to distribution of rewards, no need for backpropagation and tolerance of arbitrarily long episodes.
+
 \subsection{OpenAI Evolutionary Strategy}
 
 Compared to reinfocement learning using evolutionary strategies have the advantage of not needing a gradient of the policy performance. Also as the state transition function is not known  the gradient can't be computed using backpropagation-like algorithm. Thus some noise needs to be added to make the problem smooth and the gradient to be estimable. Here is where reinfocement learning and evolutionary strategies differ, reinfocement learning adds noise in the action space (actions are chosen from a distribution) while evolutionary strategies add noise in the parameter space (parameters perturbed while actions are deterministic).
