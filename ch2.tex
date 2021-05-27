@@ -43,7 +43,8 @@ Evolutionary strategies (ES) are a type of optimisation metaheuristic which furt
 More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each generation, which produces $\lambda$ offsprings, each created by crossover of $\rho$ individuals and each individual is able to survive for up to $\kappa$ generations as described in algorithm \ref{alg:es}. This notation further generalizes the old $(\mu,\lambda)$ and $(\mu+\lambda)$ notations, where the "," notation means $\kappa=1$ and "+" notation $\kappa=\infty$. 
 \begin{algorithm}
 \begin{algorithmic}[1]
-\caption{$(\mu / \rho,\kappa,\lambda)$-ES}\label{alg:es}
+\caption{$(\mu / \rho,\kappa,\lambda)$-ES}
+\label{alg:es}
     \State initialize population $P^0$ with $\mu$ individuals
     \State set age for each $p\in P^0$ to $1$
     \State set $t=0$
@@ -83,11 +84,13 @@ TODO \cite{Hansen06}
 
 Compared to reinfocement learning using evolutionary strategies have the advantage of not needing a gradient of the policy performance. Also as the state transition function is not known  the gradient can't be computed using backpropagation-like algorithm. Thus some noise needs to be added to make the problem smooth and the gradient to be estimable. Here is where reinfocement learning and evolutionary strategies differ, reinfocement learning adds noise in the action space (actions are chosen from a distribution) while evolutionary strategies add noise in the parameter space (parameters perturbed while actions are deterministic).
 
-\todo{dimensionality, what and when better}
+
 
 Not requiring backpropagation has several advantages over other RL methods. First the amount of computation necessary for one episode of ES is much lower (about one third, potentially even less for memory usage). Not calculating gradient using analytic methods also protects these methods from suffering from \emph{exploding gradient} which is a common issue with recurrent neural networks. And last, the network can contain elements that are not differentiable such as hard attention. 
 
+As the ES could be seen as method for computing a derivative estimate using finite differences in randomly chosen direction it would suggest that it would scale poorly with dimensions of parameters $\theta$ same as the finite differences method. In theory the number of necessary optimisation steps should scale linearly with the dimension. That however doesn't mean that larger networks optimised using ES will perform worse than smaller ones, that depends on the difficulty (intrinsic dimension) of the problem. The network will perform the same however it will take more optimisation steps to do so. 
 
+In practice ES performs slightly better on larger networks and it is hypothesised that it is for the same reason as why it is easier to optimise large networks using standard gradient based methods: larger networks have fewer local minima. 
 
 Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the envirionment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimization to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy.
 \begin{itemize}
@@ -95,7 +98,6 @@ Due to perturbing the parameters and not the actions ES are invariant to the fre
         \item algorithm description
         \item comparison with RL
         \item paralellization
-        \item smoothing in action vs. param space
     \end{itemize}
     \item Improving Exploration in Evolution Strategies for Deep Reinforcement Learning via a Population of Novelty-Seeking Agents \cite{conti2018} \begin{itemize}
         \item novelty search
