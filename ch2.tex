@@ -205,6 +205,35 @@ Specifically, for parameter vector $\theta_t^{m,i} = \theta_t^m+\sigma\epsilon_i
 
 Intuitively, following the approximated gradient based on both novelty and reward directs the search areas of the parameter-space with both high novelty and reward. This can, however, be improved further.
 
+\begin{algorithm}
+    \begin{algorithmic}[1]
+    \caption{NSR-ES}
+    \label{alg:nsr-es}
+        \State \textbf{Input}: Learning rate $\alpha$, noise standard deviation $\sigma$, initial policy parameters $\theta_0$, $n$ number of workers, $T$ number of iterations
+        \State initialize $n$ workers with known random seeds, empty archive $A$, and initial parameters $\{\theta^1_0,\dots, \theta^M_0\}$
+        \State set $t=0$
+        \For{$i \in \{1\dots M\}$}
+            \State calculate $b(\pi_{\theta^i_0})$
+            \State add $b(\pi_{\theta^i_0})$ to $A$
+        \EndFor
+        \For{$t \in \{0\dots T-1\}$}
+            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$
+            \For{$i \in \{1\dots n\}$}
+                \State sample $\epsilon_i \sim \mathcal{N}(0,I)$ 
+                \State compute characteristics $b(\theta^m_t+\sigma\epsilon_i)$
+                \State compute $n_i = N(b(\theta^m_t+\sigma\epsilon_i), A)$
+                \State compute $f_i = f(\theta^m_t+\sigma\epsilon_i)$
+            \EndFor
+            \State Send all novelties and rewards $n_i, f_i$ from each worker to every other worker
+            \For{$i \in \{1\dots n\}$} 
+                \State reconstruct all perturbations $\epsilon_j $ for $j \in \{1,\dots,n\}$ using known random seeds
+                \State set $\theta^m_{t+1} = \theta_t^m + \alpha \frac{1}{n\sigma}\sum_{j=1}^n\frac{n_i+f_i}{2}\epsilon_i$
+                \State add $b(\theta^m_{t+1})$ to $A$
+            \EndFor
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
 While NSR-ES uses a linear combination of reward and novelty to approximate that is static for the whole duration of the training. Contrary to that NSRAdapt-ES (NSRA-ES) dynamically changes the ratio of reward gradient $f(\theta_t^{i,m}$ and novelty gradient $N(\theta_t^{i,m},A)$ based on how the training is currently progressing. This way, it will give more weight to the reward (thus following the performance gradient) when making progress and more weight to the novelty (following novelty gradient) when stuck in a local optima to give more incentive to find different approaches. 
 
 Formally, a parameter $w$ is used to control the ratio of reward and novelty used for calculation of gradient estimate. For a specific $w$ at a given generation parameter vector $\theta_t^m$ is updated (SGD used) via following expression: 
