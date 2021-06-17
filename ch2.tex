@@ -98,6 +98,28 @@ where $\theta_i = \theta + \sigma\epsilon_i, \epsilon_i\sim N(0,I)$ and $n$ is t
 
 The resulting algorithm uses SGD (or Stochastic Gradient Ascent - SGA in this case) or other gradient based optimisation technique for parameter vector $\theta$ update.
 
+\begin{algorithm}
+    \begin{algorithmic}[1]
+    \caption{OpenAI-ES}
+    \label{alg:openai-es}
+        \State \textbf{Input}: Learning rate $\alpha$, noise standard deviation $\sigma$, initial policy parameters $\theta_0$, $n$ number of workers
+        \State initialize $n$ workers with known random seeds, and initial parameters $\theta_0$
+        \State set $t=0$
+        \Repeat
+            \For{$i \in \{1\dots n\}$}
+                \State sample $\epsilon_i \sim \mathcal{N}(0,I)$ 
+                \State compute returns $f_i = f(\theta_t+\sigma\epsilon_i)$
+            \EndFor
+            \State Send all scalar returns $f_i$ from each worker to every other worker
+            \For{$i \in \{1\dots n\}$}
+                \State reconstruct all perturbations $\epsilon_j $ for $j \in \{1,\dots,n\}$ using known random seeds
+                \State set $\theta_{t+1} = \theta_t + \alpha \frac{1}{n\sigma}\sum_{j=1}^nf_i\epsilon_i$
+            \EndFor
+            \State increment $t$
+        \Until{stop criterion fullfilled}
+    \end{algorithmic}
+\end{algorithm}
+
 As the ES could be seen as method for computing a derivative estimate using finite differences in randomly chosen direction it would suggest that it would scale poorly with dimensions of parameters $\theta$ same as the finite differences method. In theory the number of necessary optimisation steps should scale linearly with the dimension. That however doesn't mean that larger networks optimised using ES will perform worse than smaller ones, that depends on the difficulty (intrinsic dimension) of the problem. The network will perform the same however it will take more optimisation steps to do so. 
 
 In practice ES performs slightly better on larger networks and it is hypothesised that it is for the same reason as why it is easier to optimise large networks using standard gradient based methods: larger networks have fewer local minima. 
@@ -144,6 +166,35 @@ To perform the update step, we need to calculate the gradient estimate of expect
 
 This process is repeated for a predetermined number of times as novelty search is not supposed to converge to a "best" solution and returns the best performing policy which is being preserved during the run of the algorithm.
 
+\begin{algorithm}
+    \begin{algorithmic}[1]
+    \caption{NS-ES}
+    \label{alg:ns-es}
+        \State \textbf{Input}: Learning rate $\alpha$, noise standard deviation $\sigma$, initial policy parameters $\theta_0$, $n$ number of workers, $T$ number of iterations
+        \State initialize $n$ workers with known random seeds, empty archive $A$, and initial parameters $\{\theta^1_0,\dots, \theta^M_0\}$
+        \State set $t=0$
+        \For{$i \in \{1\dots M\}$}
+            \State calculate $b(\pi_{\theta^i_0})$
+            \State add $b(\pi_{\theta^i_0})$ to $A$
+        \EndFor
+        \For{$t \in \{0\dots T-1\}$}
+            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$
+            \For{$i \in \{1\dots n\}$}
+                \State sample $\epsilon_i \sim \mathcal{N}(0,I)$ 
+                \State compute characteristics $b(\theta^m_t+\sigma\epsilon_i)$
+                \State compute $n_i = N(b(\theta^m_t+\sigma\epsilon_i), A)$
+            \EndFor
+            \State Send all novelties $n_i$ from each worker to every other worker
+            \For{$i \in \{1\dots n\}$}
+                \State reconstruct all perturbations $\epsilon_j $ for $j \in \{1,\dots,n\}$ using known random seeds
+                \State set $\theta^m_{t+1} = \theta_t^m + \alpha \frac{1}{n\sigma}\sum_{j=1}^nn_i\epsilon_i$
+                \State add $b(\theta^m_{t+1})$ to $A$
+            \EndFor
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+
 \subsubsection{Combination with reward based exploration}
 While \emph{NS-ES} helps agents avoid local optima and deceptive reward signals, it also completly discards reward which might cause the performance to suffer. Therefore NSR-ES, an improved version of NS-ES, uses both reward (fitness) and novelty for computation of the update step. NSR-ES is in many ways similar to NS-ES, it calculates both novelty and reward at once and it operates on entire episodes. The only difference is, that the calculation of the gradient estimate is based on the average of reward and novelty. 
 
@@ -162,14 +213,3 @@ Formally, a parameter $w$ is used to control the ratio of reward and novelty use
 \end{equation}
 
 \cite{conti2018} 
-\begin{itemize}
-    \item Evolution Strategies as a Scalable Alternative to Reinforcement Learning \cite{salimans2017} \begin{itemize}
-        \item algorithm description
-        \item comparison with RL
-        \item paralellization
-    \end{itemize}
-    \item Improving Exploration in Evolution Strategies for Deep Reinforcement Learning via a Population of Novelty-Seeking Agents \cite{conti2018} \begin{itemize}
-        \item ratio of fitness and novelty and its effects
-        
-    \end{itemize}
-\end{itemize}
