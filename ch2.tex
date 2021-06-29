@@ -3,6 +3,16 @@
 
 \section{Reinforcement learning}
 \label{sec:reinf}
+The key problem that reinforcement learning is trying to solve is controlling an \emph{agent} in an \emph{environment}. The agent interacts with the environment by selecting some action and the environment responds by presenting the agent with a new situation. The envrionment also provides a numerical reward to the agent whose task is to maximise it over time.
+
+More formally, the agent interacts with the environment in discrete (if the problem has continuous time, it is discretised) time steps $t=1,2,3,\dots$. At each time step the agent recieves $S_t\in\mathcal{S}$, a representation of internal state of the environment. Based on that it selects an action $A_t\in\mathcal{A}$. This results in the agent receiving a reward $R_{t+1}\in \mathcal{R}\subset \mathbb{R}$ in addition to a new state $S_{t+1}$ in the next step generating a sequence or \emph{trajectory} beginning like this:
+\begin{equation*}
+    S_0,A_0,R_1,S_1,A_1,R_2,S_2,A_2,R_3,\dots
+\end{equation*}
+The random variables $S_t$ and $R_t$ depend only on the preceding state and action based on function $p: \mathcal{S} \times \mathcal{R} \times \mathcal{S} \times\mathcal{A} \rightarrow [0,1]$ characterising \emph{dynamics} of the problem wiht following definition:
+\begin{equation*}
+    p(s',r|s,a) = \text{Pr}\{S_t=s',R_t=r|S_{t-1}=s, A_{t-1}=a\}
+\end{equation*}
 \begin{itemize}
     \item problem description (state space, action space, reward...)
     \item various methods \begin{itemize}
