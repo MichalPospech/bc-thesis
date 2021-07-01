@@ -11,8 +11,11 @@ More formally, the agent interacts with the environment in discrete (if the prob
 \end{equation*}
 The random variables $S_t$ and $R_t$ depend only on the preceding state and action based on function $p: \mathcal{S} \times \mathcal{R} \times \mathcal{S} \times\mathcal{A} \rightarrow [0,1]$ characterising \emph{dynamics} of the problem wiht following definition:
 \begin{equation*}
-    p(s',r|s,a) = \text{Pr}\{S_t=s',R_t=r|S_{t-1}=s, A_{t-1}=a\}
+    p(s',r|s,a) = \text{Pr}\{S_t=s',R_t=r|S_{t-1}=s, A_{t-1}=a\}.
 \end{equation*}
+This can, however be viewed as an restriction on information contained in state rather than restriction on the environment. If the state does posess all information that influence the future than it has the \emph{Markovian property} and the problem at hand is a \emph{Markov decision process}.
+
+
 \begin{itemize}
     \item problem description (state space, action space, reward...)
     \item various methods \begin{itemize}
