@@ -3,7 +3,7 @@
 
 \section{Reinforcement learning}
 \label{sec:reinf}
-The key problem that reinforcement learning is trying to solve is controlling an \emph{agent} in an \emph{environment}. The agent interacts with the environment by selecting some action and the environment responds by presenting the agent with a new situation. The envrionment also provides a numerical reward to the agent whose task is to maximise it over time.
+The key problem that reinforcement learning is trying to solve is controlling an \emph{agent} in an \emph{environment}. The agent interacts with the environment by selecting some action and the environment responds by presenting the agent with a new situation. The environment also provides a numerical reward to the agent whose task is to maximise it over time.
 
 More formally, the agent interacts with the environment in discrete (if the problem has continuous time, it is discretised) time steps $t=1,2,3,\dots$. At each time step the agent recieves $S_t\in\mathcal{S}$, a representation of internal state of the environment. Based on that it selects an action $A_t\in\mathcal{A}$. This results in the agent receiving a reward $R_{t+1}\in \mathcal{R}\subset \mathbb{R}$ in addition to a new state $S_{t+1}$ in the next step generating a sequence or \emph{trajectory} beginning like this:
 \begin{equation*}
@@ -13,11 +13,28 @@ The random variables $S_t$ and $R_t$ depend only on the preceding state and acti
 \begin{equation*}
     p(s',r|s,a) = \text{Pr}\{S_t=s',R_t=r|S_{t-1}=s, A_{t-1}=a\}.
 \end{equation*}
-This can, however be viewed as an restriction on information contained in state rather than restriction on the environment. If the state does posess all information that influence the future than it has the \emph{Markovian property} and the problem at hand is a \emph{Markov decision process}.
+This can, however, be viewed as an restriction on information contained in state rather than restriction on the environment. If the state does contain all information that influence the future then it has the \emph{Markovian property} and the problem at hand is a \emph{Markov decision process}.
 
+To formally describe what is the goal of reinforcement learning \emph{expected return} $G_t$ needs to be defined first. It is a function of the reward sequence, in the simplest case an ordinary sum of rewards 
+\begin{equation}
+    \label{eq:exp-ret}
+    G_t = \sum_{i=t+1}^TR_i,
+\end{equation}
+where $T$ is the final time step. 
+
+This approach works only if the there is a final step in the interaction which would divide the interaction into subsequences called \emph{episodes}. Each episodes ends when the environment reaches a \emph{terminal state} and is reset into its initial state afterwards.
+Such tasks are called \emph{episodic tasks}. 
+
+Contrary to that there are tasks which do not break into episodes, they continue indefinitely. They are called \emph{continuing tasks} For these the definition \ref{eq:exp-ret} doesn't work as the sum could possibly be infinite. To calculate expected reward for such tasks a modified approach is needed. A \emph{discount rate} $\gamma \in [0,1]$ is introduced to define \emph{discounted return}
+\begin{equation}
+    \label{eq:disc-ret}
+    G_t = \sum_{i=0}^\infty \gamma^iR_{t+i+1}.
+\end{equation}
+The discount rate makes future reward worth less at the moment of decision. If $\gamma<1$ and the reward are bounded, then the infinite sum \ref{eq:disc-ret} is finite. For $\gamma=0$ the agent is said to be "myopic" taking into account only the immediate reward and ignoring the future. Otherwise as $\gamma$ approaches $1$ the future rewards have bigger weight and influence the agent's decision more.
+
+A common occurence in reinforcement learning is an estimating \emph{value function} which estimate how beneficial it is for the agent to be in that state. This is defined by the expected return which is dependent on the actions that the agent will perform. Therefore a value function must be defined with respect to such way of acting called \emph{policy}.
 
 \begin{itemize}
-    \item problem description (state space, action space, reward...)
     \item various methods \begin{itemize}
         \item value function
         \item criterion of optimality
