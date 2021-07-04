@@ -31,12 +31,24 @@ Contrary to that there are tasks which do not break into episodes, they continue
     G_t = \sum_{i=0}^\infty \gamma^iR_{t+i+1}.
 \end{equation}
 The discount rate makes future reward worth less at the moment of decision. If $\gamma<1$ and the reward are bounded, then the infinite sum \ref{eq:disc-ret} is finite. For $\gamma=0$ the agent is said to be "myopic" taking into account only the immediate reward and ignoring the future. Otherwise as $\gamma$ approaches $1$ the future rewards have bigger weight and influence the agent's decision more.
+Succesive returns are related in a way
 
 A common occurence in reinforcement learning is an estimating \emph{value function} which estimate how beneficial it is for the agent to be in that state. This is defined by the expected return which is dependent on the actions that the agent will perform. Therefore a value function must be defined with respect to such way of acting called \emph{policy}.
 
+Policy is a function $\pi: \mathcal{S} \times \mathcal{A} \rightarrow [0,1]$ returning probability of selecting each action in given state meaning that agent following policy $\pi$ at time $t$ would select action $A_t = a$ if in state $S_t =s$ with probability $\pi(a|s)$. The policy function is changed by reinforcement learning based on the agent's experience.
+
+For state $s$ and policy $\pi$ the \emph{state-value function} $v_\pi(s)$ gives the expected return when starting in state $s$ and following policy $\pi$, formally (for MDPs)
+\begin{equation}
+    v_\pi(s) = \mathrm{E}_\pi[G_t|S_t=s],
+\end{equation}
+where $\mathrm{E}_\pi[.]$ is expected value when following policy $\pi$ in every timestep. 
+
+\emph{Action-value function} $q_\pi(s,a)$ for policy $\pi$ is defined similarly. It gives the expeted return of taking action $a$ in state $s$ while following policy $\pi$, formally
+\begin{equation}
+    q_\pi(s,a) = \mathrm{E}_\pi[G_t|S_t=s, A_t=a].
+\end{equation}
 \begin{itemize}
     \item various methods \begin{itemize}
-        \item value function
         \item criterion of optimality
         \item direct policy search (and various methods)
     \end{itemize}
