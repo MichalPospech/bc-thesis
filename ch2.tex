@@ -6,13 +6,13 @@
 The key problem that reinforcement learning is trying to solve is controlling an \emph{agent} in an \emph{environment}. The agent interacts with the environment by selecting some action and the environment responds by presenting the agent with a new situation. The environment also provides a numerical reward to the agent whose task is to maximise it over time.
 
 More formally, the agent interacts with the environment in discrete (if the problem has continuous time, it is discretised) time steps $t=1,2,3,\dots$. At each time step the agent recieves $S_t\in\mathcal{S}$, a representation of internal state of the environment. Based on that it selects an action $A_t\in\mathcal{A}$. This results in the agent receiving a reward $R_{t+1}\in \mathcal{R}\subset \mathbb{R}$ in addition to a new state $S_{t+1}$ in the next step generating a sequence or \emph{trajectory} beginning like this:
-\begin{equation*}
+\begin{equation}
     S_0,A_0,R_1,S_1,A_1,R_2,S_2,A_2,R_3,\dots
-\end{equation*}
-The random variables $S_t$ and $R_t$ depend only on the preceding state and action based on function $p: \mathcal{S} \times \mathcal{R} \times \mathcal{S} \times\mathcal{A} \rightarrow [0,1]$ characterising \emph{dynamics} of the problem wiht following definition:
-\begin{equation*}
+\end{equation}
+The random variables $S_t$ and $R_t$ depend only on the preceding state and action based on function $p: \mathcal{S} \times \mathcal{R} \times \mathcal{S} \times\mathcal{A} \rightarrow [0,1]$ characterising \emph{dynamics} of the problem with following definition:
+\begin{equation}
     p(s',r|s,a) = \text{Pr}\{S_t=s',R_t=r|S_{t-1}=s, A_{t-1}=a\}.
-\end{equation*}
+\end{equation}
 This can, however, be viewed as an restriction on information contained in state rather than restriction on the environment. If the state does contain all information that influence the future then it has the \emph{Markovian property} and the problem at hand is a \emph{Markov decision process}.
 
 To formally describe what is the goal of reinforcement learning \emph{expected return} $G_t$ needs to be defined first. It is a function of the reward sequence, in the simplest case an ordinary sum of rewards 
@@ -47,12 +47,9 @@ where $\mathrm{E}_\pi[.]$ is expected value when following policy $\pi$ in every
 \begin{equation}
     q_\pi(s,a) = \mathrm{E}_\pi[G_t|S_t=s, A_t=a].
 \end{equation}
-\begin{itemize}
-    \item various methods \begin{itemize}
-        \item criterion of optimality
-        \item direct policy search (and various methods)
-    \end{itemize}
-\end{itemize}
+\cite{Sutton1998}
+
+
 \section{Evolutionary algorithms}
 \label{sec:ea}
 Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is everything that is needed for creation of  Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. 
@@ -174,12 +171,12 @@ Due to perturbing the parameters and not the actions ES are invariant to the fre
 While the main drive in of improvement in ES is the value of fitness (how "good" the result is), novelty search takes a different approach. Novelty search is focused on finding different solutions, as it is inspired by nature's drive towards diversity. Each policy has its novelty calculated with respect to previous policies and search is directed to parts of search space with high novelty. This approach makes it less succeptible to local optima created by deceptive rewards than reward-based method. 
 
 Each policy $\pi$ gets assigned its domain-dependent behavorial characteristics $b(\pi)$ (e.g. final position of the agent) and it is added to an archive set $A$ of characteristics of previous policies. Then the novelty $N(b(\pi_\theta), A)$ is calculated as average distance from $k$ nearest neighbours from the archive set $A$.
-\begin{equation*}
+\begin{equation}
     \begin{gathered}        
     N(\theta,A) = N(b(\pi_\theta),A)=\frac{1}{\left\lvert S\right\rvert }\sum_{j\in S} \left\lVert(\pi_\theta)-b(\pi_j) \right\rVert_2  \\
     S = kNN(b(\pi_\theta),A)
 \end{gathered} 
-\end{equation*}
+\end{equation}
 \subsubsection{Combination with evolution strategies}
 
 To find and follow the gradient of expected novelty with respected to $\theta^t$ we use the framework outlined in \ref{subsec:openai-es}. 
