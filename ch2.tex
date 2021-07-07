@@ -110,7 +110,8 @@ As for design of the variation operator there are some guidelines that should be
     \item[Unbiasedness] the operator should not favour any particular subset of solution unless provided with information about problem at hand
     \item[Control] the operator should be parametrised in such way that the size of the distribution can be controlled (practice had shown that decreasing it as the optimal solution is being approached is necessary) 
 \end{description}
-\todo{kovariance}
+
+A big part of designing efficient evolutionary strategy algorithms is adapting to covariance matrix of the used multivariate normal distribution that is commonly used as variation operator The .
 \cite{Schwefel1995}
 \cite{Rudolph2012}
 
@@ -164,7 +165,7 @@ As the ES could be seen as method for computing a derivative estimate using fini
 
 In practice ES performs slightly better on larger networks and it is hypothesised that it is for the same reason as why it is easier to optimise large networks using standard gradient based methods: larger networks have fewer local minima. 
 
-Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the envirionment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimization to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy.
+Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the envirionment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimization to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy. \cite{salimans2017}
 
 
 \subsection{Novelty search}

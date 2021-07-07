@@ -1,10 +1,5 @@
-# TODOs
-
-## Short term
-- Chapter 2 - structure
-- Chapter 2 - papers
-- Chapter 2 - text
-
-## Long term
-- everything else
+- CMA-ES - odstavec, max dva + popsanej alg
+- kovariance - odstavec
+- RL - metody (Q learning, reinforce)
+    - PEPG - odstavec
 
