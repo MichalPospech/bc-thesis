@@ -123,9 +123,9 @@ where
 \begin{description}
     \item $x_k^{t+1}$ is $k$-th individual from generation $t+1$, 
     \item $m^t$ is mean value of the search distribution at generation $t$,
-    \item $\sigma^t$ the step size at generation $t$,
-    \item $C^t$ the covariance matrix at generation $t$ and
-    \item $\lambda$ the population size.
+    \item $\sigma^t$ is the step size at generation $t$,
+    \item $C^t$ is the covariance matrix at generation $t$ and
+    \item $\lambda$ is the population size.
 \end{description}
 
 At each step the mean is moved to the weighted average of $\mu$ selected individuals (parents) from the current generation. The individuals are selected based on their fitness and the weights are parameters of the algorithm. Then the covariance matrix $C^t$ is updated using the covariance matrix from previous generation, the evolution steps and the new individuals. To control the step size $\sigma^t$ only information from evolution steps is used.\cite{hansen2016cma}
