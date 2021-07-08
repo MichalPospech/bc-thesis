@@ -46,10 +46,17 @@ where $\mathrm{E}_\pi[.]$ is expected value when following policy $\pi$ in every
 \emph{Action-value function} $q_\pi(s,a)$ for policy $\pi$ is defined similarly. It gives the expeted return of taking action $a$ in state $s$ while following policy $\pi$, formally
 \begin{equation}
     q_\pi(s,a) = \mathrm{E}_\pi[G_t|S_t=s, A_t=a].
-\end{equation}
-\cite{Sutton1998}
-\todo{Metody RL?}
+\end{equation}\cite{Sutton1998}
+\subsection{Methods}
+Methods of reinforcement learning can be divided into 3 categories: \begin{itemize}
+    \item classical,
+    \item evolutionary and
+    \item policy gradient-based.
+\end{itemize}
 
+Classical methods rely on updating \emph{Q-values} for  each state-action pair therefore they require having discrete sets of actions and states. One of the most well known algorithms is \emph{Q-learning}.
+
+Evolutionary methods will be further discussed in chapter \ref{sec:es-reinf}.
 
 \section{Evolutionary algorithms}
 \label{sec:ea}
