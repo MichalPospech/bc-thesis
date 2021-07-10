@@ -49,12 +49,54 @@ where $\mathrm{E}_\pi[.]$ is expected value when following policy $\pi$ in every
 \end{equation}\cite{Sutton1998}
 \subsection{Methods}
 Methods of reinforcement learning can be divided into 3 categories: \begin{itemize}
-    \item classical,
-    \item evolutionary and
-    \item policy gradient-based.
+    \item classical (tabular),
+    \item policy gradient-based and
+    \item evolutionary.
 \end{itemize}
 
-Classical methods rely on updating \emph{Q-values} for  each state-action pair therefore they require having discrete sets of actions and states. One of the most well known algorithms is \emph{Q-learning}.
+Classical methods rely on updating \emph{Q-values} for each state-action pair therefore they require having discrete sets of actions and states. Based on the Q-values a policy is derived, such as an $\varepsilon$-greedy policy which (in training) chooses a random action with probability $\varepsilon$ and the currently best action in all other cases. One of the most well known algorithms is \emph{Q-learning}. In it the Q-values are updated each step via following formula:
+\begin{equation}
+    q(s_t,a_t) = q(s_t,a_t) + \alpha \left( r_t+\gamma \max_a q(s_{t-1},a)-q(s_t,a_t)\right), 
+\end{equation}
+where $\alpha$ is the learning rate.
+
+\begin{algorithm}
+    \begin{algorithmic}[1]
+    \caption{Q-Learning}
+    \label{alg:q-learning}
+        \State parameters: learning rate $\alpha \in (0,1]$ 
+        \State initialise: $q(s,a)$ for all $s\in\mathcal{S}$ and $a\in \mathcal{A}$ arbitrarily, except for $q(terminal, \cdot) = 0$ 
+        \For{each episode}
+            \State initialise $s\in\mathcal{S}$
+            \Repeat
+                \State choose $a$ from $s$ using policy derived from $q$
+                \State take action $a$, observe $s', r$
+                \State $q(s,a) = q(s,a) + \alpha \left( r+\gamma \max_a q(s',a)-q(s,a)\right)$
+                \State $s = s'$
+            \Until{$s$ is terminal state}
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
+
+Policy-gradient based methods are methods that utilise the gradient in policy space. They are one  of the few optimisation strategies able to handle reinforcement learning tasks that are high-dimensional and have continuous state and action space. One of the most known algorithms from this group is \emph{REINFORCE}.
+
+
+\begin{algorithm}
+    \begin{algorithmic}[1]
+    \caption{REINFORCE}
+    \label{alg:reinforce}
+        \State parameters: step size $\alpha>0$ 
+        \State input: differentiable policy parametrisation $\pi(a|s,\theta)$
+        \State initialise: policy parameters $\theta$ atrbitrarily
+        \For{each episode}
+            \State generate $S_0, A_0, R_1,\dots,S_{T-1},A_{T-1},R_T$ by following $\pi(\cdot|\cdot,\theta)$
+            \For{each timestep $t \in \{0,1,\dots, T-1\}$}
+                \State $G = \sum_{k=t+1}^T\gamma^{k-t-1}R_k$
+                \State $\theta = \theta + \alpha \gamma^t G \nabla\ln\pi(A_t,S_t,\theta)$
+            \EndFor
+        \EndFor
+    \end{algorithmic}
+\end{algorithm}
 
 Evolutionary methods will be further discussed in chapter \ref{sec:es-reinf}.
 
