@@ -60,7 +60,7 @@ Classical methods rely on updating \emph{Q-values} for each state-action pair th
 \end{equation}
 where $\alpha$ is the learning rate.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{Q-Learning}
     \label{alg:q-learning}
@@ -81,7 +81,7 @@ where $\alpha$ is the learning rate.
 Policy-gradient based methods are methods that utilise the gradient in policy space. They are one  of the few optimisation strategies able to handle reinforcement learning tasks that are high-dimensional and have continuous state and action space. One of the most known algorithms from this group is \emph{REINFORCE}.
 
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{REINFORCE}
     \label{alg:reinforce}
@@ -106,7 +106,7 @@ Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired 
 
 There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter. \cite{Rudolph2012} \cite{Vikhar2016}
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{Evolutionary algorithm}\label{alg:ea}
         \State initialize population $P^0$ with $n$ individuals
@@ -130,7 +130,7 @@ There are many variands of EAs such as genetic algorithms (most common), genetic
 Evolutionary strategies (ES) are a type of optimisation metaheuristic which further specialises EA and restricts their level of freedom. The selection for crossover is unbiased, mutation is parametrised and thus controllable, individuals which should be put to next generation are chosen ordinally based on fitness and individuals contain not only the problem solution but also control parameters.
 
 More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each generation, which produces $\lambda$ offsprings, each created by crossover of $\rho$ individuals and each individual is able to survive for up to $\kappa$ generations as described in algorithm \ref{alg:es}. This notation further generalizes the old $(\mu,\lambda)$ and $(\mu+\lambda)$ notations, where the "," notation means $\kappa=1$ and "+" notation $\kappa=\infty$. 
-\begin{algorithm}
+\begin{algorithm}[h]
 \begin{algorithmic}[1]
 \caption{$(\mu / \rho,\kappa,\lambda)$-ES}
 \label{alg:es}
@@ -200,7 +200,7 @@ where $\theta_i = \theta + \sigma\epsilon_i, \epsilon_i\sim N(0,I)$ and $n$ is t
 
 The resulting algorithm uses SGD (or Stochastic Gradient Ascent - SGA in this case) or other gradient based optimisation technique for parameter vector $\theta$ update.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{OpenAI-ES}
     \label{alg:openai-es}
@@ -268,7 +268,7 @@ To perform the update step, we need to calculate the gradient estimate of expect
 
 This process is repeated for a predetermined number of times as novelty search is not supposed to converge to a "best" solution and returns the best performing policy which is being preserved during the run of the algorithm.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{NS-ES}
     \label{alg:ns-es}
@@ -307,7 +307,7 @@ Specifically, for parameter vector $\theta_t^{m,i} = \theta_t^m+\sigma\epsilon_i
 
 Intuitively, following the approximated gradient based on both novelty and reward directs the search areas of the parameter-space with both high novelty and reward. This can, however, be improved further.
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{NSR-ES}
     \label{alg:nsr-es}
@@ -343,7 +343,7 @@ Formally, a parameter $w$ is used to control the ratio of reward and novelty use
     \theta^m_{t+1}\coloneqq\theta^m_t + \alpha \frac{1}{n\sigma}\sum_{i=1}^n (1-w)N(\theta_t^{i,m},A)\epsilon_i+wf(\theta_t^{i,m})\epsilon_i.
 \end{equation}
 
-\begin{algorithm}
+\begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{NSRA-ES}
     \label{alg:nsra-es}
