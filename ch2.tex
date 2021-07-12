@@ -79,8 +79,6 @@ where $\alpha$ is the learning rate.
 \end{algorithm}
 
 Policy-gradient based methods are methods that utilise the gradient in policy space. They are one  of the few optimisation strategies able to handle reinforcement learning tasks that are high-dimensional and have continuous state and action space. One of the most known algorithms from this group is \emph{REINFORCE}.
-
-
 \begin{algorithm}[h]
     \begin{algorithmic}[1]
     \caption{REINFORCE}
@@ -98,7 +96,36 @@ Policy-gradient based methods are methods that utilise the gradient in policy sp
     \end{algorithmic}
 \end{algorithm}
 
-Evolutionary methods will be further discussed in chapter \ref{sec:es-reinf}.
+
+Another, not as known, class of policy-gradient based algorithms are PEPG (Parameter exploring policy gradient).\cite{Sehnke2012} They use samples from parameter space to estimate the log-likelyhood on parameter level. In traditional policy gradient methods the policy is probabilistic, it returns a distribution from which the next action is selected and final gradient is calculated by differentiating the policy with respect to parameters. This however causes high variance in samples over more episodes thus a noisy gradient estimate. PEPG circumvent this issue by having a probability distribution over policy parameters with a deterministic policy.
+
+
+\begin{algorithm}[h]
+    \begin{algorithmic}[1]
+    \caption{PGPE (Policy Gradients with Parameter-based Exploration) with symmetric sampling}
+    \label{alg:pgpe}
+        \State parameters: step size $\alpha>0$, number of histories $n$ 
+        \State initialise: $\mu, \sigma$ (both $n$ dimensional) to preselected initial values, $m=0$
+        \Repeat
+            \For{$i \in {1,\dots,n}$}
+                \State sample $\epsilon^i \sim \mathcal{N}(0,I\sigma^2)$
+                \State $\theta^+ = \mu+\epsilon^i$
+                \State $\theta^- = \mu-\epsilon^i$
+                \State evaluate policies $\pi(\cdot|\cdot,\theta^+)$ and $\pi(\cdot|\cdot, \theta^-)$ and get rewards $r^{+i}, r^{-i}$
+                
+            \EndFor
+            \State Set matrix $T$ as $T_{ij} = \epsilon_i^j$
+            \State Set matrix $S$ as $S_{ij} = \frac{(\epsilon^j_i)^2-\sigma_i^2}{\sigma_i}$
+            \State $r_T = [(r^{+1}-r^{-1}),\dots,(r^{+n}-r^{-n})]^T$
+            \State $r_S = [\frac{(r^{+1}+r^{-1})}{2},\dots,\frac{(r^{+n}+r^{-n})}{2}]^T$
+            \State Update $\mu = \mu + \alpha T r_T$
+            \State Update $\sigma = \sigma + \alpha S r_S$
+            \Until{stop criterion is fullfilled}
+    \end{algorithmic}
+\end{algorithm}
+
+
+Evolutionary methods utilise only \emph{fitness} describing the overall performance of the agent. Exploration is done via changing parameters that influence the agent's behaviour. However the basis of this class of algorithms is not derived from the mathematical principles of reinfocement learning. They are further described in following chapters.
 
 \section{Evolutionary algorithms}
 \label{sec:ea}
