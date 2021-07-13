@@ -22,3 +22,4 @@ thesis-run.xml
 thesis.run.xml
 *.toc
 *.vrb
+*.env

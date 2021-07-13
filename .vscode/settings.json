@@ -4,5 +4,6 @@
     "latex-workshop.view.pdf.viewer": "tab",
     "latex-workshop.latex.external.build.command": "make",
     "latex-workshop.latex.clean.command": "make clean",
-    "latex-workshop.latex.clean.args": []
+    "latex-workshop.latex.clean.args": [],
+    "python.pythonPath": "scripts/.env/bin/python"
 }
