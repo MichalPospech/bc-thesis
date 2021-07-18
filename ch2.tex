@@ -1,212 +1,5 @@
-\chapter{Theory}
-\label{chap:theory}
-
-\section{Reinforcement learning}
-\label{sec:reinf}
-The key problem that reinforcement learning is trying to solve is controlling an \emph{agent} in an \emph{environment}. The agent interacts with the environment by selecting some action and the environment responds by presenting the agent with a new situation. The environment also provides a numerical reward to the agent whose task is to maximise it over time.
-
-More formally, the agent interacts with the environment in discrete (if the problem has continuous time, it is discretised) time steps $t=1,2,3,\dots$. At each time step the agent recieves $S_t\in\mathcal{S}$, a representation of internal state of the environment. Based on that it selects an action $A_t\in\mathcal{A}$. This results in the agent receiving a reward $R_{t+1}\in \mathcal{R}\subset \mathbb{R}$ in addition to a new state $S_{t+1}$ in the next step generating a sequence or \emph{trajectory} beginning like this:
-\begin{equation}
-    S_0,A_0,R_1,S_1,A_1,R_2,S_2,A_2,R_3,\dots
-\end{equation}
-The random variables $S_t$ and $R_t$ depend only on the preceding state and action based on function $p: \mathcal{S} \times \mathcal{R} \times \mathcal{S} \times\mathcal{A} \rightarrow [0,1]$ characterising \emph{dynamics} of the problem with following definition:
-\begin{equation}
-    p(s',r|s,a) = \text{Pr}\{S_t=s',R_t=r|S_{t-1}=s, A_{t-1}=a\}.
-\end{equation}
-This can, however, be viewed as an restriction on information contained in state rather than restriction on the environment. If the state does contain all information that influence the future then it has the \emph{Markovian property} and the problem at hand is a \emph{Markov decision process}.
-
-To formally describe what is the goal of reinforcement learning \emph{expected return} $G_t$ needs to be defined first. It is a function of the reward sequence, in the simplest case an ordinary sum of rewards 
-\begin{equation}
-    \label{eq:exp-ret}
-    G_t = \sum_{i=t+1}^TR_i,
-\end{equation}
-where $T$ is the final time step. 
-
-This approach works only if the there is a final step in the interaction which would divide the interaction into subsequences called \emph{episodes}. Each episodes ends when the environment reaches a \emph{terminal state} and is reset into its initial state afterwards.
-Such tasks are called \emph{episodic tasks}. 
-
-Contrary to that there are tasks which do not break into episodes, they continue indefinitely. They are called \emph{continuing tasks} For these the definition \ref{eq:exp-ret} doesn't work as the sum could possibly be infinite. To calculate expected reward for such tasks a modified approach is needed. A \emph{discount rate} $\gamma \in [0,1]$ is introduced to define \emph{discounted return}
-\begin{equation}
-    \label{eq:disc-ret}
-    G_t = \sum_{i=0}^\infty \gamma^iR_{t+i+1}.
-\end{equation}
-The discount rate makes future reward worth less at the moment of decision. If $\gamma<1$ and the reward are bounded, then the infinite sum \ref{eq:disc-ret} is finite. For $\gamma=0$ the agent is said to be "myopic" taking into account only the immediate reward and ignoring the future. Otherwise as $\gamma$ approaches $1$ the future rewards have bigger weight and influence the agent's decision more.
-Succesive returns are related in a way
-
-A common occurence in reinforcement learning is an estimating \emph{value function} which estimate how beneficial it is for the agent to be in that state. This is defined by the expected return which is dependent on the actions that the agent will perform. Therefore a value function must be defined with respect to such way of acting called \emph{policy}.
-
-Policy is a function $\pi: \mathcal{S} \times \mathcal{A} \rightarrow [0,1]$ returning probability of selecting each action in given state meaning that agent following policy $\pi$ at time $t$ would select action $A_t = a$ if in state $S_t =s$ with probability $\pi(a|s)$. The policy function is changed by reinforcement learning based on the agent's experience.
-
-For state $s$ and policy $\pi$ the \emph{state-value function} $v_\pi(s)$ gives the expected return when starting in state $s$ and following policy $\pi$, formally (for MDPs)
-\begin{equation}
-    v_\pi(s) = \mathrm{E}_\pi[G_t|S_t=s],
-\end{equation}
-where $\mathrm{E}_\pi[.]$ is expected value when following policy $\pi$ in every timestep. 
-
-\emph{Action-value function} $q_\pi(s,a)$ for policy $\pi$ is defined similarly. It gives the expeted return of taking action $a$ in state $s$ while following policy $\pi$, formally
-\begin{equation}
-    q_\pi(s,a) = \mathrm{E}_\pi[G_t|S_t=s, A_t=a].
-\end{equation}\cite{Sutton1998}
-\subsection{Methods}
-Methods of reinforcement learning can be divided into 3 categories: \begin{itemize}
-    \item classical (tabular),
-    \item policy gradient-based and
-    \item evolutionary.
-\end{itemize}
-
-Classical methods rely on updating \emph{Q-values} for each state-action pair therefore they require having discrete sets of actions and states. Based on the Q-values a policy is derived, such as an $\varepsilon$-greedy policy which (in training) chooses a random action with probability $\varepsilon$ and the currently best action in all other cases. One of the most well known algorithms is \emph{Q-learning}. In it the Q-values are updated each step via following formula:
-\begin{equation}
-    q(s_t,a_t) = q(s_t,a_t) + \alpha \left( r_t+\gamma \max_a q(s_{t-1},a)-q(s_t,a_t)\right), 
-\end{equation}
-where $\alpha$ is the learning rate.
-
-\begin{algorithm}[h]
-    \begin{algorithmic}[1]
-    \caption{Q-Learning}
-    \label{alg:q-learning}
-        \State parameters: learning rate $\alpha \in (0,1]$ 
-        \State initialise: $q(s,a)$ for all $s\in\mathcal{S}$ and $a\in \mathcal{A}$ arbitrarily, except for $q(terminal, \cdot) = 0$ 
-        \For{each episode}
-            \State initialise $s\in\mathcal{S}$
-            \Repeat
-                \State choose $a$ from $s$ using policy derived from $q$
-                \State take action $a$, observe $s', r$
-                \State $q(s,a) = q(s,a) + \alpha \left( r+\gamma \max_a q(s',a)-q(s,a)\right)$
-                \State $s = s'$
-            \Until{$s$ is terminal state}
-        \EndFor
-    \end{algorithmic}
-\end{algorithm}
-
-Policy-gradient based methods are methods that utilise the gradient in policy space. They are one  of the few optimisation strategies able to handle reinforcement learning tasks that are high-dimensional and have continuous state and action space. One of the most known algorithms from this group is \emph{REINFORCE}.
-\begin{algorithm}[h]
-    \begin{algorithmic}[1]
-    \caption{REINFORCE}
-    \label{alg:reinforce}
-        \State parameters: step size $\alpha>0$ 
-        \State input: differentiable policy parametrisation $\pi(a|s,\theta)$
-        \State initialise: policy parameters $\theta$ atrbitrarily
-        \For{each episode}
-            \State generate $S_0, A_0, R_1,\dots,S_{T-1},A_{T-1},R_T$ by following $\pi(\cdot|\cdot,\theta)$
-            \For{each timestep $t \in \{0,1,\dots, T-1\}$}
-                \State $G = \sum_{k=t+1}^T\gamma^{k-t-1}R_k$
-                \State $\theta = \theta + \alpha \gamma^t G \nabla\ln\pi(A_t,S_t,\theta)$
-            \EndFor
-        \EndFor
-    \end{algorithmic}
-\end{algorithm}
-
-
-Another, not as known, class of policy-gradient based algorithms are PEPG (Parameter exploring policy gradient).\cite{Sehnke2012} They use samples from parameter space to estimate the log-likelyhood on parameter level. In traditional policy gradient methods the policy is probabilistic, it returns a distribution from which the next action is selected and final gradient is calculated by differentiating the policy with respect to parameters. This however causes high variance in samples over more episodes thus a noisy gradient estimate. PEPG circumvent this issue by having a probability distribution over policy parameters with a deterministic policy.
-
-
-\begin{algorithm}[h]
-    \begin{algorithmic}[1]
-    \caption{PGPE (Policy Gradients with Parameter-based Exploration) with symmetric sampling}
-    \label{alg:pgpe}
-        \State parameters: step size $\alpha>0$, number of histories $n$ 
-        \State initialise: $\mu, \sigma$ (both $n$ dimensional) to preselected initial values, $m=0$
-        \Repeat
-            \For{$i \in {1,\dots,n}$}
-                \State sample $\epsilon^i \sim \mathcal{N}(0,I\sigma^2)$
-                \State $\theta^+ = \mu+\epsilon^i$
-                \State $\theta^- = \mu-\epsilon^i$
-                \State evaluate policies $\pi(\cdot|\cdot,\theta^+)$ and $\pi(\cdot|\cdot, \theta^-)$ and get rewards $r^{+i}, r^{-i}$
-                
-            \EndFor
-            \State Set matrix $T$ as $T_{ij} = \epsilon_i^j$
-            \State Set matrix $S$ as $S_{ij} = \frac{(\epsilon^j_i)^2-\sigma_i^2}{\sigma_i}$
-            \State $r_T = [(r^{+1}-r^{-1}),\dots,(r^{+n}-r^{-n})]^T$
-            \State $r_S = [\frac{(r^{+1}+r^{-1})}{2},\dots,\frac{(r^{+n}+r^{-n})}{2}]^T$
-            \State Update $\mu = \mu + \alpha T r_T$
-            \State Update $\sigma = \sigma + \alpha S r_S$
-            \Until{stop criterion is fullfilled}
-    \end{algorithmic}
-\end{algorithm}
-
-
-Evolutionary methods utilise only \emph{fitness} describing the overall performance of the agent. Exploration is done via changing parameters that influence the agent's behaviour. However the basis of this class of algorithms is not derived from the mathematical principles of reinfocement learning. They are further described in following chapters.
-
-\section{Evolutionary algorithms}
-\label{sec:ea}
-Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is everything that is needed for creation of  Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. 
-
-There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter. \cite{Rudolph2012} \cite{Vikhar2016}
-
-\begin{algorithm}[h]
-    \begin{algorithmic}[1]
-    \caption{Evolutionary algorithm}\label{alg:ea}
-        \State initialize population $P^0$ with $n$ individuals
-        \State set $t=0$
-        \Repeat
-            \State $Q^t = \{\}$
-            \For{$i \in \{1\dots m\}$}
-                \State $p_1,\dots,p_\rho = ParentalSelection(P^t)$
-                \State $q = Crossover(p_1,\dots,p_\rho)$ 
-                \State $q = Mutation(q)$ with chance $p$
-                \State $Q^t = q \cup Q^t$
-            \EndFor
-            \State $P^{t+1} =EnvironmentalSelection(Q^t\cup  P^t)$
-            \State increment $t$
-        \Until{stop criterion fullfilled}
-    \end{algorithmic}
-    \end{algorithm}
-
-\section{Evolutionary strategies}
-\label{sec:es}
-Evolutionary strategies (ES) are a type of optimisation metaheuristic which further specialises EA and restricts their level of freedom. The selection for crossover is unbiased, mutation is parametrised and thus controllable, individuals which should be put to next generation are chosen ordinally based on fitness and individuals contain not only the problem solution but also control parameters.
-
-More formally ES $(\mu / \rho,\kappa,\lambda)$ has $\mu$ individuals in each generation, which produces $\lambda$ offsprings, each created by crossover of $\rho$ individuals and each individual is able to survive for up to $\kappa$ generations as described in algorithm \ref{alg:es}. This notation further generalizes the old $(\mu,\lambda)$ and $(\mu+\lambda)$ notations, where the "," notation means $\kappa=1$ and "+" notation $\kappa=\infty$. 
-\begin{algorithm}[h]
-\begin{algorithmic}[1]
-\caption{$(\mu / \rho,\kappa,\lambda)$-ES}
-\label{alg:es}
-    \State initialize population $P^0$ with $\mu$ individuals
-    \State set age for each $p\in P^0$ to $1$
-    \State set $t=0$
-    \Repeat
-        \State $Q^t = \{\}$
-        \For{$i \in \{1\dots\lambda\}$}
-            \State select $\rho$ parents $p_1,\dots,p_\rho \in P^t$ uniformly at random
-            \State $q = variation(p_1,\dots,p_\rho)$ with age $0$
-            \State $Q^t = q \cup Q^t$
-        \EndFor
-        \State $P^{t+1} =$ select $\mu$ best (wrt. fitness) individuals from $Q^t\cup \{p \in P^t: age(p)<\kappa\}$
-        \State increment age by 1 for each $p \in P^{t+1}$
-        \State increment $t$
-    \Until{stop criterion fullfilled}
-\end{algorithmic}
-\end{algorithm}
-
-To design an ES one must first select an appropriate representation for an individual and the most natural one is prefered in most cases, if all parameters are of one type (e.g. a real number) a simple vector will suffice, if the types are mixed, a tuple of vectors is required. This however causes an increased complexity of the variation operator.
-
-As for design of the variation operator there are some guidelines that should be followed when designing it.
-\begin{description}
-    \item[Reachability] every solution should be reachable from any other solution in a finite number of applications of the variation operator with probability $p > 0$
-    \item[Unbiasedness] the operator should not favour any particular subset of solution unless provided with information about problem at hand
-    \item[Control] the operator should be parametrised in such way that the size of the distribution can be controlled (practice had shown that decreasing it as the optimal solution is being approached is necessary) 
-\end{description}
-
-A big part of designing efficient evolutionary strategy algorithms is adapting the covariance matrix of the used multivariate normal distribution that is commonly used as variation operator. It is assumed that setting the covariance matrix $\Sigma$ of the distribution proportional to the inverse Hessian matrix of Taylor expansion of the fitness function. This would align the hyperellipsoid of equal probabilities of the mutation distribution with the hyperellipsoid of equal fitness values.\cite{Schwefel1995}\cite{Rudolph2012}
-
-\subsection{CMA-ES}
-\label{subsec:cma-es}
-The aforementioned idea is used in Covariance Matrix Adaptation Evolutionary Strategy algorithm. In it the population of new individuals is generated by sampling a multivariate normal distribution. The individuals are sampled via following equation for generation $t \in \mathrm{N}_0$:
-\begin{equation}
-    x_k^{t+1} \sim m^t + \sigma^t\mathcal{N}(0,C^t),\ k\in \{1,2,\dots,\lambda\}, 
-\end{equation}
-where 
-\begin{description}
-    \item $x_k^{t+1}$ is $k$-th individual from generation $t+1$, 
-    \item $m^t$ is mean value of the search distribution at generation $t$,
-    \item $\sigma^t$ is the step size at generation $t$,
-    \item $C^t$ is the covariance matrix at generation $t$ and
-    \item $\lambda$ is the population size.
-\end{description}
-
-At each step the mean is moved to the weighted average of $\mu$ selected individuals (parents) from the current generation. The individuals are selected based on their fitness and the weights are parameters of the algorithm. Then the covariance matrix $C^t$ is updated using the covariance matrix from previous generation, the evolution steps and the new individuals. To control the step size $\sigma^t$ only information from evolution steps is used.\cite{hansen2016cma}
-
-\section{Evolutionary strategies as replacement for reinfocement learning}
+\chapter{Evolutionary strategies in reinforcement learning}
+\label{ch:es-rl}
 \label{sec:es-reinf}
 
 Black-box optimisation is an alternative approach to solving RL tasks also known as Direct policy search or neurevolution when applied to neural networks. It has several attractive properties such as indifferenco to distribution of rewards, no need for backpropagation and tolerance of arbitrarily long episodes.
@@ -217,7 +10,7 @@ Not requiring backpropagation has several advantages over other RL methods. Firs
 
 Also ES are easily paralellisable. First, contrary to RL, where value function is inherently linear procedure and has to be performed more times to improve a given policy. Furthermore it operates on whole whole episodes, therefore it does not require frequent commuincation between workers. And finally, as the only information received by each worker is the reward, it is possible to communicate only the reward inbetween workers. That, however, requires synchronising seeds known to other workers beforehand and recreating perturbations based on that information. Thus the required is extremely low comapred to communication of whole gradients which would be required for paralellisation of a policy gradient based algorithm.
 
-\subsection{OpenAI Evolutionary Strategy}
+\section{OpenAI Evolutionary Strategy}
 \label{subsec:openai-es}
 These ideas are explored in OpenAI-ES algorithm. The agent acting in the envrionment is represented be a policy $\pi_\theta$  with parameter vector $\theta$ and $f(\cdot)$ is the reward returned by the environment. As we need to introduce some noise, the population is distribution $p_@y$ is instantiated as an an isotropic multivariate Gaussian with mean $\psi$ and covariance $\sigma^2I$. Then $\mathbb{E}_{\theta\sim p_\psi}f(\theta) = \mathbb{E}_{\epsilon\sim N(0,I)}f(\theta+\sigma\epsilon)$. Thus the gradient approximation is calculated as follows:
 \begin{equation}
@@ -256,7 +49,7 @@ In practice ES performs slightly better on larger networks and it is hypothesise
 Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the envirionment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimization to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy. \cite{salimans2017}
 
 
-\subsection{Novelty search}
+\section{Novelty search}
 
 While the main drive in of improvement in ES is the value of fitness (how "good" the result is), novelty search takes a different approach. Novelty search is focused on finding different solutions, as it is inspired by nature's drive towards diversity. Each policy has its novelty calculated with respect to previous policies and search is directed to parts of search space with high novelty. This approach makes it less succeptible to local optima created by deceptive rewards than reward-based method. 
 
@@ -267,7 +60,7 @@ Each policy $\pi$ gets assigned its domain-dependent behavorial characteristics 
     S = kNN(b(\pi_\theta),A)
 \end{gathered} 
 \end{equation}
-\subsubsection{Combination with evolution strategies}
+\subsection{Combination with evolution strategies}
 
 To find and follow the gradient of expected novelty with respected to $\theta^t$ we use the framework outlined in \ref{subsec:openai-es}. 
 
@@ -324,7 +117,7 @@ This process is repeated for a predetermined number of times as novelty search i
 \end{algorithm}
 
 
-\subsubsection{Combination with reward based exploration}
+\subsection{Combination with reward based exploration}
 While \emph{NS-ES} helps agents avoid local optima and deceptive reward signals, it also completly discards reward which might cause the performance to suffer. Therefore NSR-ES, an improved version of NS-ES, uses both reward (fitness) and novelty for computation of the update step. NSR-ES is in many ways similar to NS-ES, it calculates both novelty and reward at once and it operates on entire episodes. The only difference is, that the calculation of the gradient estimate is based on the average of reward and novelty. 
 
 Specifically, for parameter vector $\theta_t^{m,i} = \theta_t^m+\sigma\epsilon_i$ we calculate the reward $f(\theta_t^{m,i})$ and novelty $N(\theta_t^{m,i},A)$, rank-normalise both values independently (as both values usually have completely different scales), calculate the average and set it as weight for corresponding $\epsilon_i$ for gradient estimation. Then the estimated gradient is used to update the parameter vector via SGD (or other gradient based optimisation method) simirally as in equation \ref{eq:ns-es-update}:

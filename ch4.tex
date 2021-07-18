@@ -1,0 +1,13 @@
+\chapter{Technical implementation}
+
+The experiments were run using modified the \texttt{estool} tool which was originally used for an article about evolutionary strategies \cite{ha2017evolving}. Another option was to use implementation by Uber available at \url{https://github.com/uber-research/deep-neuroevolution} however it is much more complex (uses redis for inter-worker communication) and thus would be harder to extend.
+
+\texttt{estool} makes use of the master-slave paradigm with one thread controlling the evolution and slaves only evaluating the candidate solutions. Communication between workers is done using \texttt{MPI} framework. The slave workers accept 3 types of commands from the master worker: \begin{itemize}
+    \item \texttt{eval} - tells the slave to evaluate the solutions that will be sent next and send the results back to the master,
+    \item \texttt{archive} - tells the slave to add the behavioral characteristic that will be sent next to the archive used for novelty calculation,
+    \item \texttt{kill} - tells the slave to stop.
+\end{itemize}
+
+Each solution is evaluated more times (configured with \texttt{num\_episode} parameter) to get a better estimate of particular solutions performance because it could vary based on selected seed. Similar approach is used for handling behavioural characteristics of solutions. One characteristic consists of more vectors and to calculate distance between two characteristics mean of all pairwise distances is used to account for strong dependence on seed.
+
+\todo{Rewrite to make sense} This slightly deviates from the algorithms outlined in chapter \ref{ch:es-rl}. There only the results of solution evalution (and characteristics of new solutions in case of an algorithm that utilises novelty) are communicated between workers and all parameter perturbations are done locally based on shared seeds while \texttt{estool} does all perturbations in the master worker and solutions are sent, along with seeds for the task, to slave workers only for evaluation. This impacts the algorithm performance as the communication overhead increases with larger population and larger solutions (parameter vectors for policies), quality of generated solutions is not affected at all because the way the new vector $\theta$ is calculated doesn't change.
