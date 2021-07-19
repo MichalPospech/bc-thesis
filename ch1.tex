@@ -205,3 +205,30 @@ where
 \end{description}
 
 At each step the mean is moved to the weighted average of $\mu$ selected individuals (parents) from the current generation. The individuals are selected based on their fitness and the weights are parameters of the algorithm. Then the covariance matrix $C^t$ is updated using the covariance matrix from previous generation, the evolution steps and the new individuals. To control the step size $\sigma^t$ only information from evolution steps is used.\cite{hansen2016cma}
+
+\begin{algorithm}[h]
+    \begin{algorithmic}[1]
+    \caption{CMA-ES}
+    \label{alg:cma-es}
+        \State parameters: $\lambda, w_{i=1\dots\lambda}, c_\sigma,d_\sigma, c_c, c_\mu$ (set according to Table 1 in \cite{hansen2016cma})
+        \State initialise: $p_\sigma=0,p_c=0$, covariance matrix $C=I$, $g=0$, distribution mean $m$ and $\sigma > 0$ step-size depending on the problem
+        \State set $t=0$
+        \Repeat
+            \State increment $t$
+            \State calculate matrices $B,D$ such that $C=BDDB^T$ (spectral decomposition)
+            \For{$ k= 1,\dots,\lambda$}
+            \Comment sample new individuals
+                \State $z_k \sim \mathcal{N}(0,I)$
+                \State $y_k = BDz_k$
+                \State $x_k = m+\sigma y_k$
+                \State evaluate $x_k$
+            \EndFor
+            \State $\langle y_t\rangle_w = \sum_{i=1}^\mu w_i y_{y:\lambda} $ \Comment $y_{i:\lambda}$ is $i$-th best performing individual
+            \State $m = m+c_m \sigma \langle y\rangle_w$
+            \State $p_\sigma = (1-c_\sigma)p_\sigma + \sqrt{c_\sigma (2-c_c)\mu_{\text{eff}}}C^{-\frac{1}{2}}\langle y \rangle_w$ \Comment $\mu_{\text{eff}}=(\sum_{i=1}^\lambda w_i^2)^{-1}$
+            \State $\sigma = \sigma \exp(\frac{c_\sigma}{d_\sigma}(\frac{\Vert p_\sigma\Vert}{\mathrm{E}\Vert\mathcal{N}(0,I)\Vert}-1))$
+            \State $w_i' = w_i(1\ \text{if}\ w_i> 0\ \text{else}\ n/ \Vert C^{-\frac{1}{2}}y_{i:\lambda}\Vert^2)$
+            \State $C = (1+c_1\delta(h_\sigma)-c_1-c_\mu\sum_{i=1}^\lambda w_i)C + c_1p_cp_c^T + c_\mu\sum_{i=1}^\lambda w_i'y_{i:\lambda}y_{i:\lambda}^T$
+        \Until{stop criterion fullfilled}
+    \end{algorithmic}
+    \end{algorithm}
