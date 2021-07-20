@@ -8,11 +8,11 @@ Compared to reinfocement learning using evolutionary strategies has the advantag
 
 Not requiring backpropagation has several advantages over other RL methods. First the amount of computation necessary for one episode of ES is much lower (about one third, potentially even less for memory usage). Not calculating gradient using analytic methods also protects these methods from suffering from \emph{exploding gradient} which is a common issue with recurrent neural networks. And last, the network can contain elements that are not differentiable such as hard attention.
 
-Also ES are easily paralellisable. First, contrary to RL, where value function is inherently linear procedure and has to be performed more times to improve a given policy. Furthermore it operates on whole whole episodes, therefore it does not require frequent commuincation between workers. And finally, as the only information received by each worker is the reward, it is possible to communicate only the reward inbetween workers. That, however, requires synchronising seeds known to other workers beforehand and recreating perturbations based on that information. Thus the required is extremely low comapred to communication of whole gradients which would be required for paralellisation of a policy gradient based algorithm.
+Also ES are easily paralellisable. First, contrary to RL, where value function is inherently linear procedure and has to be performed more times to improve a given policy. Furthermore it operates on whole whole episodes, therefore it does not require frequent commuincation between workers. And finally, as the only information received by each worker is the reward, it is possible to communicate only the reward inbetween workers. That, however, requires synchronising seeds known to other workers beforehand and recreating perturbations based on that information. Thus the required bandwidth is extremely low comapred to communication of whole gradients which would be required for paralellisation of a policy gradient based algorithm.
 
 \section{OpenAI Evolutionary Strategy}
 \label{subsec:openai-es}
-These ideas are explored in OpenAI-ES algorithm. The agent acting in the envrionment is represented be a policy $\pi_\theta$  with parameter vector $\theta$ and $f(\cdot)$ is the reward returned by the environment. As we need to introduce some noise, the population is distribution $p_@y$ is instantiated as an an isotropic multivariate Gaussian with mean $\psi$ and covariance $\sigma^2I$. Then $\mathbb{E}_{\theta\sim p_\psi}f(\theta) = \mathbb{E}_{\epsilon\sim N(0,I)}f(\theta+\sigma\epsilon)$. Thus the gradient approximation is calculated as follows:
+These ideas are explored in OpenAI-ES algorithm. The agent acting in the environment is represented be a policy $\pi_\theta$  with parameter vector $\theta$ and $f(\cdot)$ is the reward returned by the environment. As we need to introduce some noise, the population is distribution $p_\theta$ is instantiated as an an isotropic multivariate Gaussian with mean $\psi$ and covariance $\sigma^2I$. Then $\mathbb{E}_{\theta\sim p_\psi}f(\theta) = \mathbb{E}_{\epsilon\sim N(0,I)}f(\theta+\sigma\epsilon)$. Thus the gradient approximation is calculated as follows:
 \begin{equation}
     \nabla_{\theta}\mathbb{E}_{\theta\sim p_\psi}f(\theta) =\nabla_{\theta}\mathbb{E}_{\epsilon\sim N(0,I)}f(\theta+\sigma\epsilon)\approx \frac{1}{n\sigma}\sum_{i=1}^n f(\theta_i)\epsilon_i,  
 \end{equation}
@@ -46,7 +46,7 @@ As the ES could be seen as method for computing a derivative estimate using fini
 
 In practice ES performs slightly better on larger networks and it is hypothesised that it is for the same reason as why it is easier to optimise large networks using standard gradient based methods: larger networks have fewer local minima. 
 
-Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the envirionment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimization to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy. \cite{salimans2017}
+Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the environment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimisation to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy. \cite{salimans2017}
 
 
 \section{Novelty search}
@@ -72,10 +72,11 @@ With archive $A$ and sampled parameters $\theta_t^i=\theta_t + \sigma\epsilon_i$
 
 It is possible because archive $A$ is fixed during one iteration and is updated only at the end. Only characteristics corresponding to each $\theta^t$ are added to $A$, as adding each sampled would cause the archive $A$ to inflate too much increasing the complexity of calculation of nearest-neighbours.
 
-To encourage additional diversity an initial meta-population of $M$, selection of $M$ is domain dependent, agents is created. While it is possible to optimise the behaviour of a single agent and reward it for behaving differently than its ancestors, this way we get the benefits of population-based exploration. \todo{Describe?} Each agent has parameters $\theta^m$ and is being rewarded for behaviour different from all prior agents, thus we get $M$ differently behaving policies.
+To encourage additional diversity an initial meta-population of $M$, selection of $M$ is domain dependent, agents is created. While it is possible to optimise the behaviour of a single agent and reward it for behaving differently than its ancestors, this way we get the benefits of population-based exploration (each agent can become expert at some particular subtask the environment presents amd can be further combined, more approaches can be explored and only the promising ones can be explored further). Each agent has parameters $\theta^m$ and is being rewarded for behaviour different from all prior agents, thus we get $M$ differently behaving policies.
 
 $M$ random parameter vectors are initialised and in each iteration one is selected to be updated. The selection probability is proportional to its novelty.
 \begin{equation}
+\label{eq:ns-sample}
     P(\theta^m) = \frac{N(\theta^m,A)}{\sum_{i=1}^M N(\theta^i,A)}
 \end{equation}
 
@@ -100,7 +101,7 @@ This process is repeated for a predetermined number of times as novelty search i
             \State add $b(\pi_{\theta^i_0})$ to $A$
         \EndFor
         \For{$t \in \{0\dots T-1\}$}
-            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$
+            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$ based on equation \ref{eq:ns-sample}
             \For{$i \in \{1\dots n\}$}
                 \State sample $\epsilon_i \sim \mathcal{N}(0,I)$ 
                 \State compute characteristics $b(\theta^m_t+\sigma\epsilon_i)$
@@ -139,7 +140,7 @@ Intuitively, following the approximated gradient based on both novelty and rewar
             \State add $b(\pi_{\theta^i_0})$ to $A$
         \EndFor
         \For{$t \in \{0\dots T-1\}$}
-            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$
+            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$ based on equation \ref{eq:ns-sample}            
             \For{$i \in \{1\dots n\}$}
                 \State sample $\epsilon_i \sim \mathcal{N}(0,I)$ 
                 \State compute characteristics $b(\theta^m_t+\sigma\epsilon_i)$
@@ -156,7 +157,7 @@ Intuitively, following the approximated gradient based on both novelty and rewar
     \end{algorithmic}
 \end{algorithm}
 
-While NSR-ES uses a linear combination of reward and novelty to approximate that is static for the whole duration of the training. Contrary to that NSRAdapt-ES (NSRA-ES) dynamically changes the ratio of reward gradient $f(\theta_t^{i,m}$ and novelty gradient $N(\theta_t^{i,m},A)$ based on how the training is currently progressing. This way, it will give more weight to the reward (thus following the performance gradient) when making progress and more weight to the novelty (following novelty gradient) when stuck in a local optima to give more incentive to find different approaches. 
+While NSR-ES uses a linear combination of reward and novelty to approximate that is static for the whole duration of the training. Contrary to that NSRAdapt-ES (NSRA-ES) dynamically changes the ratio of reward gradient $f(\theta_t^{i,m})$ and novelty gradient $N(\theta_t^{i,m},A)$ based on how the training is currently progressing. This way, it will give more weight to the reward (thus following the performance gradient) when making progress and more weight to the novelty (following novelty gradient) when stuck in a local optima to give more incentive to find different approaches. 
 
 Formally, a parameter $w$ is used to control the ratio of reward and novelty used for calculation of gradient estimate. For a specific $w$ at a given generation parameter vector $\theta_t^m$ is updated (SGD used) via following expression: 
 \begin{equation}
@@ -175,7 +176,7 @@ Formally, a parameter $w$ is used to control the ratio of reward and novelty use
             \State add $b(\pi_{\theta^i_0})$ to $A$
         \EndFor
         \For{$t \in \{0\dots T-1\}$}
-            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$
+            \State sample $\theta_t^m$ from $\{\theta^1_t,\dots, \theta^M_t\}$ based on equation \ref{eq:ns-sample}            
             \For{$i \in \{1\dots n\}$}
                 \State sample $\epsilon_i \sim \mathcal{N}(0,I)$ 
                 \State compute characteristics $b(\theta^m_t+\sigma\epsilon_i)$

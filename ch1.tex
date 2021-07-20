@@ -30,22 +30,21 @@ Contrary to that there are tasks which do not break into episodes, they continue
     \label{eq:disc-ret}
     G_t = \sum_{i=0}^\infty \gamma^iR_{t+i+1}.
 \end{equation}
-The discount rate makes future reward worth less at the moment of decision. If $\gamma<1$ and the reward are bounded, then the infinite sum \ref{eq:disc-ret} is finite. For $\gamma=0$ the agent is said to be "myopic" taking into account only the immediate reward and ignoring the future. Otherwise as $\gamma$ approaches $1$ the future rewards have bigger weight and influence the agent's decision more.
-Succesive returns are related in a way
+The discount rate makes future reward worth less at the moment of decision. If $\gamma<1$ and the rewards are bounded, then the infinite sum \ref{eq:disc-ret} is finite. For $\gamma=0$ the agent is said to be "myopic" taking into account only the immediate reward and ignoring the future. Otherwise as $\gamma$ approaches $1$ the future rewards have bigger weight and influence the agent's decision more.
 
-A common occurence in reinforcement learning is an estimating \emph{value function} which estimate how beneficial it is for the agent to be in that state. This is defined by the expected return which is dependent on the actions that the agent will perform. Therefore a value function must be defined with respect to such way of acting called \emph{policy}.
+A common occurence in reinforcement learning is an estimating \emph{value function} which estimates how beneficial it is for the agent to be in that state. This is defined by the expected return which is dependent on the actions that the agent will perform. Therefore a value function must be defined with respect to such way of acting called \emph{policy}.
 
 Policy is a function $\pi: \mathcal{S} \times \mathcal{A} \rightarrow [0,1]$ returning probability of selecting each action in given state meaning that agent following policy $\pi$ at time $t$ would select action $A_t = a$ if in state $S_t =s$ with probability $\pi(a|s)$. The policy function is changed by reinforcement learning based on the agent's experience.
 
 For state $s$ and policy $\pi$ the \emph{state-value function} $v_\pi(s)$ gives the expected return when starting in state $s$ and following policy $\pi$, formally (for MDPs)
 \begin{equation}
-    v_\pi(s) = \mathrm{E}_\pi[G_t|S_t=s],
+    v_\pi(s) = \mathbb{E}_\pi[G_t|S_t=s],
 \end{equation}
-where $\mathrm{E}_\pi[.]$ is expected value when following policy $\pi$ in every timestep. 
+where $\mathbb{E}_\pi[.]$ is expected value when following policy $\pi$ in every timestep. 
 
 \emph{Action-value function} $q_\pi(s,a)$ for policy $\pi$ is defined similarly. It gives the expeted return of taking action $a$ in state $s$ while following policy $\pi$, formally
 \begin{equation}
-    q_\pi(s,a) = \mathrm{E}_\pi[G_t|S_t=s, A_t=a].
+    q_\pi(s,a) = \mathbb{E}_\pi[G_t|S_t=s, A_t=a].
 \end{equation}\cite{Sutton1998}
 \subsection{Methods}
 Methods of reinforcement learning can be divided into 3 categories: \begin{itemize}
@@ -97,7 +96,7 @@ Policy-gradient based methods are methods that utilise the gradient in policy sp
 \end{algorithm}
 
 
-Another, not as known, class of policy-gradient based algorithms are PEPG (Parameter exploring policy gradient).\cite{Sehnke2012} They use samples from parameter space to estimate the log-likelyhood on parameter level. In traditional policy gradient methods the policy is probabilistic, it returns a distribution from which the next action is selected and final gradient is calculated by differentiating the policy with respect to parameters. This however causes high variance in samples over more episodes thus a noisy gradient estimate. PEPG circumvent this issue by having a probability distribution over policy parameters with a deterministic policy.
+Another, not as known, class of policy-gradient based algorithms are PEPG (Parameter exploring policy gradient).\cite{Sehnke2012} They use samples from parameter space to estimate the log-likelihood on parameter level. In traditional policy gradient methods the policy is probabilistic, it returns a distribution from which the next action is selected and final gradient is calculated by differentiating the policy with respect to parameters. This however causes high variance in samples over more episodes thus a noisy gradient estimate. PEPG circumvent this issue by having a probability distribution over policy parameters with a deterministic policy.
 
 
 \begin{algorithm}[h]
@@ -129,9 +128,9 @@ Evolutionary methods utilise only \emph{fitness} describing the overall performa
 
 \section{Evolutionary algorithms}
 \label{sec:ea}
-Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is everything that is needed for creation of  Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. 
+Evolutionary algorithms (EA) are a type of optimisation metaheuristics inspired by the process of bilogical evolution. At first a number of possible solutions to the problem at hand is generated (\emph{population}) and each solution (\emph{individual}) is encoded (via a domain-specific encoding) and evaluated giving us the value of its \emph{fitness}. Fitness is a function describing how good that particular individual is and it is then utilised in the process of selection. Then a new population is created using a \emph{crossover} (combination) of 1 or more individuals which are selected using the operator of \emph{parental selection}. Each of the newly created individuals has a chance to be mutated via the \emph{mutation} operator. Finally a new population is selected from \emph{offsprings} and possibly the parents based of fitness and enters the next iteration of the EA and the following generation is chosen using \emph{environmental selection} operator. The algorithm repeats until the stop condition is met, usually a set number of iterations or small improvement of fitness between 2 generations. 
 
-There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter. \cite{Rudolph2012} \cite{Vikhar2016}
+There are many variands of EAs such as genetic algorithms (most common), genetic programming, evolutionary programming, neuroevolution or evolutionary strategies that are further described in following chapter.\cite{Vikhar2016}
 
 \begin{algorithm}[h]
     \begin{algorithmic}[1]
@@ -226,7 +225,7 @@ At each step the mean is moved to the weighted average of $\mu$ selected individ
             \State $\langle y_t\rangle_w = \sum_{i=1}^\mu w_i y_{y:\lambda} $ \Comment $y_{i:\lambda}$ is $i$-th best performing individual
             \State $m = m+c_m \sigma \langle y\rangle_w$
             \State $p_\sigma = (1-c_\sigma)p_\sigma + \sqrt{c_\sigma (2-c_c)\mu_{\text{eff}}}C^{-\frac{1}{2}}\langle y \rangle_w$ \Comment $\mu_{\text{eff}}=(\sum_{i=1}^\lambda w_i^2)^{-1}$
-            \State $\sigma = \sigma \exp(\frac{c_\sigma}{d_\sigma}(\frac{\Vert p_\sigma\Vert}{\mathrm{E}\Vert\mathcal{N}(0,I)\Vert}-1))$
+            \State $\sigma = \sigma \exp(\frac{c_\sigma}{d_\sigma}(\frac{\Vert p_\sigma\Vert}{\mathbb{E}\Vert\mathcal{N}(0,I)\Vert}-1))$
             \State $w_i' = w_i(1\ \text{if}\ w_i> 0\ \text{else}\ n/ \Vert C^{-\frac{1}{2}}y_{i:\lambda}\Vert^2)$
             \State $C = (1+c_1\delta(h_\sigma)-c_1-c_\mu\sum_{i=1}^\lambda w_i)C + c_1p_cp_c^T + c_\mu\sum_{i=1}^\lambda w_i'y_{i:\lambda}y_{i:\lambda}^T$
         \Until{stop criterion fullfilled}
