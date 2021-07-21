@@ -1,5 +1,7 @@
 \chapter{Technical implementation}
 
+All source code used in this thesis along with sample configuration files and instructions can be found at \url{https://github.com/MichalPospech/bc-project}.
+
 The experiments were run using modified the \texttt{estool} tool, written in the Python programming language, which was originally used for an article about evolutionary strategies \cite{ha2017evolving}. Another option was to use implementation by Uber available at \url{https://github.com/uber-research/deep-neuroevolution} however it is much more complex (uses redis for inter-worker communication) and thus would be harder to extend.
 
 \texttt{estool} makes use of the master-slave paradigm with one thread controlling the evolution and slaves only evaluating the candidate solutions. Communication between workers is done using \texttt{MPI} framework. The slave workers accept 3 types of commands from the master worker: \begin{itemize}
@@ -14,3 +16,9 @@ During training solution is evaluated more times (configured with parameter \tex
 
 However there is a slight deviation from the algorithms outlined in chapter \ref{ch:es-rl}. There only the results of solution evalution (and characteristics of new solutions in case of an algorithm that utilises novelty) are communicated between workers and all parameter perturbations are done locally based on shared seeds while \texttt{estool} does all perturbations in the master worker and solutions are sent, along with seeds for the task, to slave workers only for evaluation. This impacts the algorithm performance as the communication overhead increases with larger population and larger solutions (parameter vectors for policies) while the quality of generated solutions is not affected at all because the way new parameter vectors $\theta$ are calculated doesn't change.
 
+As the project uses MPI for multiprocessing, running it is slightly more complex than running an ordinary Python project. It needs to be run using \texttt{mpiexec} as follows.
+\begin{verbatim}
+    mpiexec -n NUM_CPU python -m mpi4py train.py -f CONFIG
+\end{verbatim}
+
+Parameter \texttt{NUM\_CPU} must be at least 2 (due to the the master-slave paradigm) and at most the physical number of cores/nodes and \texttt{CONFIG} is a path to JSON configuration file for the experiment. Further details and instructions can be found in the \texttt{Readme.md} file in the project repository at \url{https://github.com/MichalPospech/bc-project}.
