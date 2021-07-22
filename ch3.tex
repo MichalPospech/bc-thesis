@@ -19,7 +19,7 @@ The physics of the pole is controlled by equations specified for "Pendullum Swin
     \includegraphics[width=0.8\textwidth]{img/cartpole.png}
 \end{figure}
 % 
-The behaviour characteristics is calculated similarly in both environments, inspired by approach used in \cite{Inden2013} for classic Cartpole problem. For Slimevolley the $x$-coordinate of the controlled agent at timesteps 10, 30, 100, 300, 1000 and 3000 is taken and in Cartpole environment the $x$-coordinate of the cart at timesteps 5, 10, 50, 100, 500 and 100 is taken. If the environment doesn't reach that state a 0 is filled in. This slightly differs from the implementation outlined in \cite{Inden2013}. Then simple Euclidean norm is used to calculcate distance between two such characteristics.
+The behavioural characteristics is calculated similarly in both environments, inspired by approach used in \cite{Inden2013} for classic Cartpole problem. For Slimevolley the $x$-coordinate of the controlled agent at timesteps 10, 30, 100, 300, 1000 and 3000 is taken and in Cartpole environment the $x$-coordinate of the cart at timesteps 5, 10, 50, 100, 500 and 100 is taken. If the environment doesn't reach that state a 0 is filled in. This slightly differs from the implementation outlined in \cite{Inden2013}. Then simple Euclidean norm is used to calculcate distance between two such characteristics.
 
 Controlled agents's policies are represented with small feed-forward neural networks, for Cartpole 1-layer neural network with 5 inputs, 10 neurons in middle layer and one output neuron and $\tanh$ activation function applied to output of all neurons. Slimevolley has a bigger network, 12 input neurons, two layers with 20 neurons and 3 output neurons with $\tanh$ activation function.
 
@@ -63,7 +63,7 @@ The experiments have shown that this environment is quite challenging to solve. 
 
 \subsection{Cartpole-swingup}
 
-This environment has proven to be significantly less challenging than Slimovolley. Both OpenAI-ES and CMA-ES have managed to solve it but CMA-ES seems to have a significant performance dropoff in later generations. Closer inspection of data from traning has shown that in some cases the trainig gets stuck at values around 925 with parameters slowly growing in magnitude before completely exploding and performance dropping off. 
+This environment has proven to be significantly less challenging than Slimovolley. Both OpenAI-ES and CMA-ES have managed to solve it but CMA-ES seems to have a significant performance dropoff in later generations. Closer inspection of data from traning has shown that in some cases the trainig gets stuck at values around 925 with parameters slowly growing in magnitude before completely exploding and performance dropping off. Bad performance from NS-ES was expected as it has no incetive to pursue better performance. NSR-ES slowly and steadily improves and the trajectory suggests that it would improve further given more time. This is most likely thanks to having 1:1 ratio of fitness and novelty therefore the the search for novelty slows down the search for improvement. In case of NSRA-ES a fast improvement can be seen in the beginning however as the weight of novelty slowly increases the algorithm starts to perform similarly to NS-ES. This behaviour can be probably avoided with either better hyperparameter tuning or better novelty calculation.
 
 
 \begin{figure}[H]
