@@ -21,66 +21,90 @@ The physics of the pole is controlled by equations specified for "Pendullum Swin
 % 
 The behavioural characteristics is calculated similarly in both environments, inspired by approach used in \cite{Inden2013} for classic Cartpole problem. For Slimevolley the $x$-coordinate of the controlled agent at timesteps 10, 30, 100, 300, 1000 and 3000 is taken and in Cartpole environment the $x$-coordinate of the cart at timesteps 5, 10, 50, 100, 500 and 100 is taken. If the environment doesn't reach that state a 0 is filled in. This slightly differs from the implementation outlined in \cite{Inden2013}. Then simple Euclidean norm is used to calculcate distance between two such characteristics.
 
-Controlled agents's policies are represented with small feed-forward neural networks, for Cartpole 1-layer neural network with 5 inputs, 10 neurons in middle layer and one output neuron and $\tanh$ activation function applied to output of all neurons. Slimevolley has a bigger network, 12 input neurons, two layers with 20 neurons and 3 output neurons with $\tanh$ activation function. 
+Controlled agents's policies are represented with small feed-forward neural networks, for Cartpole 1-layer neural network with 5 inputs, 10 neurons in middle layer and one output neuron and $\tanh$ activation function applied to output of all neurons. Slimevolley has a bigger network, 12 input neurons, two layers with 20 neurons and 3 output neurons with $\tanh$ activation function.
 
 \section{Experiments}
 
-There were several experiments run in each environment. All experiments were run 10 times with different starting seeds for 1000 or 900 (in case of novelty based algorithms due to memory contraint on system where experiments were run) generations with population of 90 and 3 episodes per evaluation. The 6 six methods that were tried are:
+There were several experiments run in each environment. All experiments were run 10 times with different starting seeds for 1000 or 900 (in case of novelty based algorithms due to memory contraint on system where experiments were run) generations with population of 90 and 3 episodes per evaluation. The 5 methods that were tried are:
 \begin{itemize}
-    \item CMA-ES, 
-    \item PGPE,
+    \item CMA-ES,
     \item OpenAI ES,
-    \item NS-ES, 
+    \item NS-ES,
     \item NSR-ES and
     \item NSRA-ES.
 \end{itemize}
 
-For CMA-ES, the only parameter was $\sigma_{init}$ which controls the initial standard deviation and it was set to 0.1. PGPE had $\sigma_{init}$ 0.1 and other parameters controlling the standard deviation set to 0.2, 0.999, 0.01 and 0.2 for learning rate, rate of decay, limit and maximal change. OpenAI-ES started with $\sigma$ 0.1, rate of decay 0.999 and limit 0.01. Novelty search based algorithm had fixed $\sigma$ (because it doesn't make sense to change it since there are more individuals) of 0.1 and used 5 as $k$ in k-nearest neighbours and metapopulation with size 5. In addition to that NSRA-ES waited 10 steps before increasing the ratio of novelty in the gradient by 0.05. All algorithms, except for CMA-ES, used the Adam \cite{kingma2017adam} optimiser, with learning rate 0.1. In all presented graphs a median is shown along with the first and third quartile.
+For CMA-ES, the only parameter was $\sigma_{init}$ which controls the initial standard deviation and it was set to 0.1. OpenAI-ES started with $\sigma$ 0.1, rate of decay 0.999 and limit 0.01. Novelty search based algorithm had fixed $\sigma$ (because it doesn't make sense to change it since there are more individuals) of 0.1 and used 5 as $k$ in k-nearest neighbours and metapopulation with size 5. In addition to that NSRA-ES waited 10 steps before increasing the ratio of novelty in the gradient by 0.05. All algorithms, except for CMA-ES, used the Adam \cite{kingma2017adam} optimiser, with learning rate 0.1. In all presented graphs a median is shown along with the first and third quartile and the presented value is the current "mean" individual (or the best from metapopulation) evaluated on 270 runs. This evaluation was done every 25 generations.
 
-\subsection{Slimevolley}
-
-The experiments have shown that this environment is quite challenging to solve. Only CMA-ES has managed to get good results in the 10 runs included in the experiment. Since the reward received by CMA-ES caps at 30 it would suggest that the agent didn't learn to beat the opponent but only to defend well enough. However during development OpenAI-ES has managed to get some good results as well but it was strongly sensitive to seed, equalling the performance of CMA-ES in some runs while not improving at all in others. Novelty search-based methods did fail as well on this problem while intuitively they should have a higher chance of producing good results as they are able to explore in multiple directions at once thus have higher probability of going in the right direction. Bad performance by NS-ES was expected and in accordance with \cite{conti2018}. However both NSR-ES and NSRA-ES did not perform well either which points to either badly designed novelty or suboptimal hyperparameter setting. 
-
-\begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-slime-cmaes.pdf}
-\end{figure}
-\begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-slime-open.pdf}
-\end{figure}
-\begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-slime-nses.pdf}
-\end{figure}
-\begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-slime-nsres.pdf}
-\end{figure}
-\begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-slime-nsraes.pdf}
-\end{figure}
-\begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-slime-pepg.pdf}
-\end{figure}
-\newpage
 
 \subsection{Cartpole-swingup}
 
-This environment has proven to be significantly less challenging than Slimovolley. Both OpenAI-ES and CMA-ES have managed to solve it but CMA-ES seems to have a significant performance dropoff in later generations. Closer inspection of data from traning has shown that in some cases the trainig gets stuck at values around 925 with parameters slowly growing in magnitude before completely exploding and performance dropping off. Bad performance from NS-ES was expected as it has no incetive to pursue better performance. NSR-ES slowly and steadily improves and the trajectory suggests that it would improve further given more time. This is most likely thanks to having 1:1 ratio of fitness and novelty therefore the the search for novelty slows down the search for improvement. In case of NSRA-ES a fast improvement can be seen in the beginning however as the weight of novelty slowly increases the algorithm starts to perform similarly to NS-ES. This behaviour can be probably avoided with either better hyperparameter tuning or better novelty calculation.
+This environment has proven to be significantly less challenging than Slimovolley. Both CMA-ES and  OpenAI-ES have managed to solve (figures \ref{fig:cart-cma} and \ref{fig:cart-open}) it but CMA-ES seems to have a significant performance dropoff in later generations (see figure \ref{fig:cart-cma}). Closer inspection of data from traning has shown that in some cases the trainig gets stuck at values around 925 with parameters slowly growing in magnitude before completely exploding and performance dropping off. Bad performance from NS-ES was expected as it has no incetive to pursue better performance. NSR-ES (figure \ref{fig:cart-nsr}) slowly and steadily improves and the trajectory suggests that it would improve further given more time. This is most likely thanks to having 1:1 ratio of fitness and novelty therefore the the search for novelty slows down the search for improvement. In case of NSRA-ES (figure \ref{fig:cart-nsra}) a fast improvement can be seen in the beginning however as the weight of novelty slowly increases the algorithm starts to perform similarly to NS-ES (figure \ref{fig:cart-ns}). This behaviour can be probably avoided with either better hyperparameter tuning or better novelty calculation.
 
 
 \begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-cart-cmaes.pdf}
+    \includegraphics[width=0.8\textwidth]{img/eval-cart-cmaes.pdf}
+    \caption{CMA-ES on Cartpole environment}
+    \label{fig:cart-cma}
 \end{figure}
 \begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-cart-open.pdf}
+    \includegraphics[width=0.8\textwidth]{img/eval-cart-open.pdf}
+    \caption{OpenAI-ES on Cartpole environment}
+    \label{fig:cart-open}
+
 \end{figure}
 \begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-cart-nses.pdf}
+    \includegraphics[width=0.8\textwidth]{img/eval-cart-nses.pdf}
+    \caption{NS-ES on Cartpole environment}
+    \label{fig:cart-ns}
+
 \end{figure}
 \begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-cart-nsres.pdf}
+    \includegraphics[width=0.8\textwidth]{img/eval-cart-nsres.pdf}
+    \caption{NSR-ES on Cartpole environment}
+    \label{fig:cart-nsr}
+
 \end{figure}
 \begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-cart-nsraes.pdf}
+    \includegraphics[width=0.8\textwidth]{img/eval-cart-nsraes.pdf}
+    \caption{NSRA-ES on Cartpole environment}
+    \label{fig:cart-nsra}
+
+\end{figure}
+
+
+\subsection{Slimevolley}
+
+The experiments have shown that this environment is quite challenging to solve. Only CMA-ES (figure \ref{fig:slime-cma}) has managed to get good results in the 10 runs included in the experiment. Since the reward received by CMA-ES caps at 30 it would suggest that the agent didn't learn to beat the opponent but only to defend well enough. However during development OpenAI-ES (figure \ref{fig:slime-open}) has managed to get some good results as well but it was strongly sensitive to seed, equalling the performance of CMA-ES in some runs while not improving at all in others. Novelty search-based methods (figures \ref{fig:slime-ns}, \ref{fig:slime-nsr} and \ref{fig:slime-nsra}) did fail as well on this problem while intuitively they should have a higher chance of producing good results as they are able to explore in multiple directions at once thus have higher probability of going in the right direction. Bad performance by NS-ES was expected and in accordance with \cite{conti2018}. However both NSR-ES and NSRA-ES did not perform well either which points to either badly designed novelty or suboptimal hyperparameter setting.
+
+\begin{figure}[H]
+    \includegraphics[width=0.8\textwidth]{img/eval-slime-cmaes.pdf}
+    \caption{CMA-ES on Slimevolley environment}
+    \label{fig:slime-cma}
+
 \end{figure}
 \begin{figure}[H]
-    \includegraphics[width=0.9\textwidth]{img/eval-cart-pepg.pdf}
+    \includegraphics[width=0.8\textwidth]{img/eval-slime-open.pdf}
+    \caption{OpenAI-ES on Slimevolley environment}
+    \label{fig:slime-open}
+
 \end{figure}
+\begin{figure}[H]
+    \includegraphics[width=0.8\textwidth]{img/eval-slime-nses.pdf}
+    \caption{NS-ES on Slimevolley environment}
+    \label{fig:slime-ns}
+
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=0.8\textwidth]{img/eval-slime-nsres.pdf}
+    \caption{NSR-ES on Slimevolley environment}
+    \label{fig:slime-nsr}
+
+\end{figure}
+\begin{figure}[H]
+    \includegraphics[width=0.8\textwidth]{img/eval-slime-nsraes.pdf}
+    \caption{NSRA-ES on Slimevolley environment}
+    \label{fig:slime-nsra}
+
+\end{figure}
+\newpage
