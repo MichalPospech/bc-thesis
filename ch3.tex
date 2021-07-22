@@ -21,7 +21,7 @@ The physics of the pole is controlled by equations specified for "Pendullum Swin
 % 
 The behavioural characteristics is calculated similarly in both environments, inspired by approach used in \cite{Inden2013} for classic Cartpole problem. For Slimevolley the $x$-coordinate of the controlled agent at timesteps 10, 30, 100, 300, 1000 and 3000 is taken and in Cartpole environment the $x$-coordinate of the cart at timesteps 5, 10, 50, 100, 500 and 100 is taken. If the environment doesn't reach that state a 0 is filled in. This slightly differs from the implementation outlined in \cite{Inden2013}. Then simple Euclidean norm is used to calculcate distance between two such characteristics.
 
-Controlled agents's policies are represented with small feed-forward neural networks, for Cartpole 1-layer neural network with 5 inputs, 10 neurons in middle layer and one output neuron and $\tanh$ activation function applied to output of all neurons. Slimevolley has a bigger network, 12 input neurons, two layers with 20 neurons and 3 output neurons with $\tanh$ activation function.
+Controlled agents's policies are represented with small feed-forward neural networks, for Cartpole 1-layer neural network with 5 inputs, 10 neurons in middle layer and one output neuron and $\tanh$ activation function applied to output of all neurons. Slimevolley has a bigger network, 12 input neurons, two layers with 20 neurons and 3 output neurons with $\tanh$ activation function. 
 
 \section{Experiments}
 
@@ -35,7 +35,7 @@ There were several experiments run in each environment. All experiments were run
     \item NSRA-ES.
 \end{itemize}
 
-For CMA-ES, the only parameter was $\sigma_{init}$ which controls the initial standard deviation and it was set to 0.1. PGPE had $\sigma_{init}$ 0.1 and other parameters controlling the standard deviation set to 0.2, 0.999, 0.01 and 0.2 for learning rate, rate of decay, limit and maximal change. OpenAI-ES started with $\sigma$ 0.1, rate of decay 0.999 and limit 0.01. Novelty search based algorithm had fixed $\sigma$ (because it doesn't make sense to change it since there are more individuals) of 0.1 and used 5 as $k$ in k-nearest neighbours. In addition to that NSRA-ES waited 10 steps before increasing the ratio of novelty in the gradient by 0.05. All algorithms, except for CMA-ES, used the Adam \cite{kingma2017adam} optimiser, with learning rate 0.1. In all presented graphs a median is shown along with the first and third quartile.
+For CMA-ES, the only parameter was $\sigma_{init}$ which controls the initial standard deviation and it was set to 0.1. PGPE had $\sigma_{init}$ 0.1 and other parameters controlling the standard deviation set to 0.2, 0.999, 0.01 and 0.2 for learning rate, rate of decay, limit and maximal change. OpenAI-ES started with $\sigma$ 0.1, rate of decay 0.999 and limit 0.01. Novelty search based algorithm had fixed $\sigma$ (because it doesn't make sense to change it since there are more individuals) of 0.1 and used 5 as $k$ in k-nearest neighbours and metapopulation with size 5. In addition to that NSRA-ES waited 10 steps before increasing the ratio of novelty in the gradient by 0.05. All algorithms, except for CMA-ES, used the Adam \cite{kingma2017adam} optimiser, with learning rate 0.1. In all presented graphs a median is shown along with the first and third quartile.
 
 \subsection{Slimevolley}
 

@@ -2,7 +2,7 @@
 \label{ch:es-rl}
 \label{sec:es-reinf}
 
-Black-box optimisation is an alternative approach to solving RL tasks also known as Direct policy search or neurevolution when applied to neural networks. It has several attractive properties such as indifferenco to distribution of rewards, no need for backpropagation and tolerance of arbitrarily long episodes.
+Black-box optimisation is an alternative approach to solving RL tasks also known as Direct policy search or neurevolution when applied to neural networks. It has several attractive properties such as indifferenco to distribution of rewards, no need for backpropagation and tolerance of arbitrarily long episodes.\cite{salimans2017}
 
 Compared to reinfocement learning using evolutionary strategies has the advantage of not needing a gradient of the policy performance. Also as the state transition function is not known  the gradient can't be computed using backpropagation-like algorithm. Thus some noise needs to be added to make the problem smooth and the gradient to be estimable. Here is where reinfocement learning and evolutionary strategies differ, reinfocement learning adds noise in the action space (actions are chosen from a distribution) while evolutionary strategies add noise in the parameter space (parameters perturbed while actions are deterministic).
 
@@ -46,12 +46,13 @@ As the ES could be seen as method for computing a derivative estimate using fini
 
 In practice ES performs slightly better on larger networks and it is hypothesised that it is for the same reason as why it is easier to optimise large networks using standard gradient based methods: larger networks have fewer local minima. 
 
-Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the environment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimisation to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy. \cite{salimans2017}
+Due to perturbing the parameters and not the actions ES are invariant to the frequency at which the agent acts in the environment. Tradtional MDP-based reinforcement learning methods rely on \emph{frameskip} as one their parameters that is crucial to get right for the optimisation to be successful. While this is solvable for problems that do not require long term planning and actions, long term strategic behaviour poses a challenge and reinfocement learning needs hiearchy to be succesful unlike evolutionary strategy. 
 
 
 \section{Novelty search}
 
-While the main drive in of improvement in ES is the value of fitness (how "good" the result is), novelty search takes a different approach. Novelty search is focused on finding different solutions, as it is inspired by nature's drive towards diversity. Each policy has its novelty calculated with respect to previous policies and search is directed to parts of search space with high novelty. This approach makes it less succeptible to local optima created by deceptive rewards than reward-based method. 
+While the main drive in of improvement in ES is the value of fitness (how "good" the result is), novelty search takes a different approach. Novelty search is focused on finding different solutions, as it is inspired by nature's drive towards diversity. Each policy has its novelty calculated with respect to previous policies and search is directed to parts of search space with high novelty. This approach makes it less succeptible to local optima created by deceptive rewards than reward-based method. \cite{conti2018} 
+
 
 Each policy $\pi$ gets assigned its domain-dependent behavorial characteristics $b(\pi)$ (e.g. final position of the agent) and it is added to an archive set $A$ of characteristics of previous policies. Then the novelty $N(b(\pi_\theta), A)$ is calculated as average distance from $k$ nearest neighbours from the archive set $A$.
 \begin{equation}
@@ -206,4 +207,3 @@ Formally, a parameter $w$ is used to control the ratio of reward and novelty use
 \end{algorithm}
 
 
-\cite{conti2018} 
