@@ -1,4 +1,4 @@
-\chapter{Results and discussion}
+\chapter{Experiments}
 \section{Environments}
 
 First environment used for evaluation is the \emph{Slimevolley} environment. The Slimevolley environment \cite{slimevolleygym} is based on a game called "Slime Volleyball" created by an unknown author. The agent's task in this environment is to get the ball to hit ground on the opponent's side to make the oponent lose a life. The opponent is controlled by a small, 120-parameter, pre-trained neural network. \cite{ha2015slimevolley}
@@ -18,4 +18,21 @@ The physics of the pole is controlled by equations specified for "Pendullum Swin
     \caption{Screenshot of Cartpole-swingup environment}
     \includegraphics[width=0.8\textwidth]{img/cartpole.png}
 \end{figure}
+% 
+The behaviour characteristics is calculated similarly in both environments, inspired by approach used in \cite{Inden2013}. For Slimevolley the $x$-coordinate of the controlled agent at timesteps 10, 30, 100, 300, 1000 and 3000 is taken and in Cartpole environment the $x$-coordinate of the cart at timesteps 5, 10, 50, 100, 500 and 100 is taken. If the environment doesn't reach that state a 0 is filled in. This slightly differs from the implementation outlined in \cite{Inden2013}. Then simple Euclidean norm is used to calculcate distance between two such characteristics.
 
+Controlled agents's policies are represented with small feed-forward neural networks, for Cartpole 1-layer neural network with 5 inputs, 10 neurons in middle layer and one output neuron and $\tanh$ activation function applied to output of all neurons. Slimevolley has a bigger network, 12 input neurons, two layers with 20 neurons and 3 output neurons with $\tanh$ activation function.
+
+\section{Experiments}
+
+There were several experiments run in each environment. All experiments were run 10 times with different starting seeds for 700 generations with population of 90 and 3 episodes per evaluation. The 6 six methods that were tried are:
+\begin{itemize}
+    \item CMA-ES, 
+    \item PEGP,
+    \item OpenAI ES,
+    \item NS-ES, 
+    \item NSR-ES and
+    \item NSRA-ES.
+\end{itemize}
+
+For CMA-ES, the only parameter was $\sigma_{init}$ which controls the initial standard deviation and it was set to 0.1. PGPE had $\sigma_{init}$ 0.1 and other parameters controlling the standard deviation set to 0.2, 0.999, 0.01 and 0.2 for learning rate, rate of decay, limit and maximal change. OpenAI-ES started with $\sigma$ 0.1, rate of decay 0.999 and limit 0.01. Novelty search based algorithm had fixed $\sigma$ (because it doesn't make sense to change it since there are more individuals) of 0.1 and used 5 as $k$ in k-nearest neighbours. In addition to that NSRA-ES waited 10 steps before increasing the ratio of novelty in the gradient by 0.05. All algorithms, except for CMA-ES, used the Adam \cite{kingma2017adam} optimiser, with learning rate 0.1.
