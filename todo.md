@@ -1,5 +1,9 @@
-- CMA-ES - odstavec, max dva + popsanej alg
-- kovariance - odstavec
-- RL - metody (Q learning, reinforce)
-    - PEPG - odstavec
+Teorie - reference na algs
+PEPG - indexy, policy as input
+
+stejne meritko
+
+conclusion
+ - co se udelalo
+ - mohlo se udelat xyz
 
